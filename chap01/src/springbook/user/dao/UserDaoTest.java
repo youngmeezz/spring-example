@@ -6,11 +6,9 @@ import springbook.user.domain.User;
 
 public class UserDaoTest {
 	
-	public static void main(String[] args) throws ClassNotFoundException, SQLException {
-		
-		ConnectionMaker connecionMaker = new DConnectionMaker();
-		
-		UserDao dao = new UserDao(connecionMaker);
+	public static void main(String[] args) throws ClassNotFoundException, SQLException {	
+
+		UserDao dao = new DaoFactory().userDao();
 		
 		User user = new User();
 		user.setId("whiteship");
@@ -27,5 +25,4 @@ public class UserDaoTest {
 		
 		System.out.println(user2.getId() + "조회 성공");
 	}
-
 }
