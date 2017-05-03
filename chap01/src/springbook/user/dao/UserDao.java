@@ -5,6 +5,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import com.mysql.jdbc.ConnectionFeatureNotAvailableException;
+
 import springbook.user.domain.User;
 
 public class UserDao {
@@ -16,8 +18,6 @@ public class UserDao {
 	}
 	
 	public void add(User user) throws ClassNotFoundException, SQLException {
-		// 인터페이스에 정의된 메소드를 사용하므로, 클래스가 바뀐다 해도
-		// 메소드 이름이 변경될 걱정은 없음!
 		Connection conn = connectionMaker.makeConnection();
 		
 		PreparedStatement ps = conn.prepareStatement(
@@ -31,7 +31,8 @@ public class UserDao {
 		ps.close();
 		conn.close();
 	}
-	public User get(String id) throws ClassNotFoundException, SQLException {
+	
+	public User get2(String id) throws ClassNotFoundException, SQLException {
 		
 		Connection conn = connectionMaker.makeConnection();
 		
