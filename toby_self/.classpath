@@ -3,7 +3,7 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="lib" path="C:/Users/Administrator/Desktop/프로그래밍언어/SPRING/자료/토비의스프링vol3.1/토비/Vol1-31/Libs/lib/com.springsource.net.sf.cglib-2.2.0.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Administrator/Desktop/프로그래밍언어/SPRING/자료/토비의스프링vol3.1/토비/Vol1-31/Libs/lib/com.springsource.org.apache.commons.logging-1.1.1.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Administrator/Desktop/프로그래밍언어/SPRING/자료/토비의스프링vol3.1/토비/Vol1-31/Libs/lib/com.springsource.org.junit-4.7.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Administrator/Desktop/프로그래밍언어/SPRING/자료/토비의스프링vol3.1/토비/Vol1-31/Libs/lib/com.springsource.org.junit-4.7.0.jar" sourcepath="C:/Users/ADMINI~1/AppData/Local/Temp/decompiler/source/com.springsource.org.junit-4.7.0-sources.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Administrator/Desktop/프로그래밍언어/SPRING/자료/토비의스프링vol3.1/토비/Vol1-31/Libs/lib/mysql-connector-java-5.1.7-bin.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Administrator/Desktop/프로그래밍언어/SPRING/자료/토비의스프링vol3.1/토비/Vol1-31/Libs/lib/org.springframework.asm-3.1.2.RELEASE.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Administrator/Desktop/프로그래밍언어/SPRING/자료/토비의스프링vol3.1/토비/Vol1-31/Libs/lib/org.springframework.beans-3.1.2.RELEASE.jar"/>

@@ -20,13 +20,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import springbook.user.domain.User;
 
-@RunWith(SpringJUnit4ClassRunner.class) 
-@ContextConfiguration(locations="/applicationContext.xml")
-// 테스트 메소드에서 애플리케이션 컨텍스트의 구성이나
-// 상태를 변경하는 거승ㄹ 테스트 컨텍스트 프레임 워크에 알려줌
-@DirtiesContext 
 public class UserDaoTest {
-	@Autowired
 	private UserDao dao;
 	
 	private User user1;
@@ -39,8 +33,7 @@ public class UserDaoTest {
 		user2 = new User("leegw700","이길원","springno2");
 		user3 = new User("bumjin","박범진","springno3");
 		
-		// 테스트에서 UserDao가 사용할 DataSource
-		// 오브젝트를 직접 생성		
+		dao = new UserDao();		
 		DataSource dataSource = new SingleConnectionDataSource (
 				"jdbc:mysql://localhost/testdb","spring","book",true );
 		dao.setDataSource(dataSource);
