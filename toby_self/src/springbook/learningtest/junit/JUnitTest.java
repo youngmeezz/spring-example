@@ -32,6 +32,8 @@ public class JUnitTest {
 		assertThat( testObjects, not(hasItem(this)) ) ;
 		testObjects.add(this);
 		
+		// 메처와 비교할 대상인 첫 번째 파라미터에 Boolean 타입의 결과가
+		// 나오는 조건문을 넣고, 그 결과를 is() 메처를 써서 true와 비교
 		assertThat(contextObject == null || contextObject == this.context, is(true) );
 		contextObject = this.context;
 	}
@@ -41,6 +43,8 @@ public class JUnitTest {
 		assertThat( testObjects, not(hasItem(this)) ) ;
 		testObjects.add(this);
 		
+		// 조건문을 받아서 그 결과가 true인지 false 인지를 확인하도록 만들어진
+		// assertTrue() 라는 검증용 메소드를 assertThat() 대신 사용
 		assertTrue(contextObject == null || contextObject == this.context);
 		contextObject = this.context;
 	}
