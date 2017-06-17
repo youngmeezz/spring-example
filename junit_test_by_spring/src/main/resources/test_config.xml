@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<general>
+	<function>
+		<test1>
+			<use>true</use>
+		</test1>
+		
+		<test2>
+			<use>false</use>
+		</test2>	
+	</function>
+</general>
