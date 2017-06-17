@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ehcache>
-	<cache name="spittleCache"
-		maxBytesLocalHeap="50m"
+	<cache name="testCache" maxBytesLocalHeap="50m"
 		timeToLiveSeconds="100">
 	</cache>
 </ehcache>

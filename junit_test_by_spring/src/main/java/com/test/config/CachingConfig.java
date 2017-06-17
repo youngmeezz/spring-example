@@ -1,5 +1,6 @@
 package com.test.config;
 
+
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.ehcache.EhCacheCacheManager;
 import org.springframework.cache.ehcache.EhCacheManagerFactoryBean;
@@ -41,7 +42,7 @@ public class CachingConfig {
 	public EhCacheManagerFactoryBean ehcache() {
 		EhCacheManagerFactoryBean ehCacheFactoryBean = new EhCacheManagerFactoryBean();
 		
-		ehCacheFactoryBean.setConfigLocation(new ClassPathResource("src/main/resources/cache/ehcache.xml"));
+		ehCacheFactoryBean.setConfigLocation(new ClassPathResource("file:src/main/resources/cache/ehcache.xml"));
 		
 		return ehCacheFactoryBean;
 	}

@@ -1,4 +1,4 @@
-package com.test.mapper;
+package com.test.persistence;
 
 import java.sql.Connection;
 

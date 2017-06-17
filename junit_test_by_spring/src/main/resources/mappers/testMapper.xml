@@ -3,15 +3,48 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.test.mapper.TestMapper">
-	
-	<select id="findOneById">
-	select
-		*
-	from
-		tbl_test_domain
-	where
-		name=#{name}
+
+	<select id="findNameById" resultType="String">
+		select
+			name
+		from
+			tbl_test_domain
+		where
+			id = #{id}
 	</select>
 	
-
+	<select id="findOneById" resultType="TestDomain">
+		select
+			*
+		from
+			tbl_test_domain
+		where
+			id=#{id}
+	</select>
+	
+	<select id="findOneByName" resultType="TestDomain">
+		select
+			*
+		from
+			tbl_test_domain
+		where
+			name=#{name}
+	</select>
+	
+	<insert id="save">
+		insert into
+		tbl_test_domain (
+			id , name
+		) values (
+			test_domain_id_seq.nextval, #{name} 
+		)
+	</insert>
+	
+	<delete id="deleteAll">
+		delete 
+			from 
+		tbl_test_domain 
+			where 
+		id > 0
+	</delete>
 </mapper>  

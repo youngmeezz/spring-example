@@ -1,4 +1,4 @@
-package com.test.mapper;
+package com.test.persistence;
 
 import static org.hamcrest.CoreMatchers.is;
 

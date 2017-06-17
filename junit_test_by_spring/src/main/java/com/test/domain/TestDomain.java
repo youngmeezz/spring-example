@@ -15,7 +15,6 @@ public class TestDomain {
 	}
 	
 	public void setId(Integer id) {
-		System.out.println("setter");
 		this.id = id;
 	}
 	
