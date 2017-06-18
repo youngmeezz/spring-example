@@ -1,11 +1,10 @@
 package com.test.persistence;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
 import javax.inject.Inject;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,7 +30,8 @@ public class TestDaoTest {
 	TestDao testDao;
 	
 	@Before
-	public void setUp() {		
+	public void setUp() {
+		logger.info("TestDaoTest setUp()");
 		vo1 = new TestDomain();
 		vo1.setName("test1");
 		vo2 = new TestDomain();
@@ -41,28 +41,23 @@ public class TestDaoTest {
 	}
 	
 	@Test
+	public void deleteAllAndInitSeqTest() {
+		
+	}
+	
+	@Test
 	public void saveAndFindTest() {
 		testDao.deleteAll();
 		
 		testDao.save( vo1.getName() );
-		TestDomain findByNameVO = testDao.findOneByName( vo1.getName() );
-		TestDomain findByIdVO = testDao.findOneById(findByNameVO.getId());
-		Assert.assertThat( vo1.getName(), is(findByNameVO.getName() ));
-		Assert.assertThat( findByNameVO.getName() , is(findByIdVO.getName() ));
-		
-		testDao.save( vo2.getName() );
-		findByNameVO = testDao.findOneByName( vo2.getName() );
-		findByIdVO = testDao.findOneById(findByNameVO.getId());
-		Assert.assertThat( vo2.getName(), is(findByNameVO.getName() ));
-		Assert.assertThat( findByNameVO.getName() , is(findByIdVO.getName() ));
-		
-		testDao.save( vo3.getName() );
-		findByNameVO = testDao.findOneByName( vo3.getName() );
-		findByIdVO = testDao.findOneById(findByNameVO.getId());
-		Assert.assertThat( vo3.getName(), is(findByNameVO.getName() ));
-		Assert.assertThat( findByNameVO.getName() , is(findByIdVO.getName() ));
-		
-		findByNameVO = testDao.findOneByName(" test ");
-		Assert.assertNull(findByNameVO);
+		TestDomain last1 = testDao.findOneLastSaved();
+		System.out.println(last1);		
 	}
 }
+
+
+
+
+
+
+

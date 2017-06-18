@@ -22,13 +22,22 @@
 			id=#{id}
 	</select>
 	
-	<select id="findOneByName" resultType="TestDomain">
+	<select id="findAllByName" resultType="TestDomain">
 		select
 			*
 		from
 			tbl_test_domain
 		where
 			name=#{name}
+	</select>
+	
+	<select id="findOneLastSaved" resultType="TestDomain">
+		select
+			*
+		from
+			tbl_test_domain
+		where
+			id = (select test_domain_id_seq.currval from dual)			
 	</select>
 	
 	<insert id="save">
