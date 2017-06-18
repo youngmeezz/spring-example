@@ -20,6 +20,7 @@ public class ConvertSpectialCharsRunner {
 				String str = reader.readLine();
 				if(str == null) break;
 				writer.write(ConvertHtmlSpecialChar.convertHTML(str));
+				writer.write("\r\n");
 			}				
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
