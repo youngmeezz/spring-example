@@ -12,33 +12,46 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import springbook.user.domain.User;
 
 public class UserDao {
+	private JdbcContext jdbcContext;	
 	private DataSource dataSource;
 	
 	public void setDataSource(DataSource dataSource) {
-		this.dataSource = dataSource;
-	}
+		// JdbcContext 생성(IoC)
+		jdbcContext = new JdbcContext();
 
-	public void add(User user) throws SQLException {
-		Connection c = null;
-		PreparedStatement ps = null;
-		try {
-			c = this.dataSource.getConnection();
-			ps = c.prepareStatement(
-					"insert into users(id, name, password) values(?,?,?)");
-			
-			ps.setString(1, user.getId());
-			ps.setString(2, user.getName());
-			ps.setString(3, user.getPassword());
-			ps.executeUpdate();
-		} finally {
-			close(c,ps,null);
-		}		 		
+		// 의존 오브젝트 주입(DI)
+		jdbcContext.setDataSource(dataSource);
+
+		// 아직 jdbcContex를 적용하지 않은 메소드를 위해 저장
+		this.dataSource = dataSource;		
 	}
 	
-	private void close(Connection conn, PreparedStatement ps, ResultSet rs) throws SQLException {
-		if( rs != null ) {rs.close();}
-		if( ps != null ) {ps.close();}
-		if( conn != null ) {conn.close();}		
+	/**
+	 * User 등록
+	 * @param user
+	 * @throws SQLException
+	 */
+	public void add(final User user) throws SQLException {		
+		this.jdbcContext.workWithStatementStrategy(
+				new StatementStrategy() {
+					@Override
+					public PreparedStatement makePreparedStatement(Connection c) throws SQLException {
+						PreparedStatement ps = 
+									c.prepareStatement("insert into users(id, name, password) values(?,?,?)");
+						ps.setString(1, user.getId());
+						ps.setString(2, user.getName());
+						ps.setString(3, user.getPassword());
+
+						return ps;
+					}
+				}
+		);
+	}
+		
+	private void close(Connection conn, PreparedStatement ps, ResultSet rs) {		
+		if( rs != null ) { try{ rs.close();}catch(SQLException e){}};
+		if( ps != null ) { try{ ps.close();}catch(SQLException e){}};
+		if( conn != null ) { try{ conn.close();}catch(SQLException e){}};				
 	}
 
 	public User get(String id) throws SQLException {
@@ -69,10 +82,14 @@ public class UserDao {
 	}
 	
 	public void deleteAll() throws SQLException {
-		// 선정한 전략 클래스의 오브젝트 생성
-		StatementStrategy st = new DeleteAllStatement();
-		// 컨텍스트 호출. 전략 오브젝트 전달
-		jdbcContextWithStatementStrategy(st);
+		this.jdbcContext.workWithStatementStrategy(
+				new StatementStrategy() {
+					@Override
+					public PreparedStatement makePreparedStatement(Connection c) throws SQLException {
+						PreparedStatement ps = c.prepareStatement("delete from users");
+						return ps;
+					}
+		});
 	}
 	
 	public int getCount() throws SQLException {
@@ -89,26 +106,4 @@ public class UserDao {
 			close(c,ps,rs);
 		}
 	}
-	
-	
-	public void jdbcContextWithStatementStrategy(StatementStrategy stmt) throws SQLException {
-		Connection c = null;
-		PreparedStatement ps = null;
-		
-		try {
-			c = this.dataSource.getConnection();
-						
-			ps = stmt.makePreparedStatement(c);
-			
-			ps.executeUpdate();
-		} catch(SQLException e) {
-			throw e;
-		} finally {
-			if( ps!= null ) try{ps.close();}catch(SQLException e){}
-			if( c != null ) try{c.close();}catch(SQLException e){}
-		}	
-	}
-
-	
-
 }
