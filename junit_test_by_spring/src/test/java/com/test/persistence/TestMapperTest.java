@@ -26,8 +26,7 @@ public class TestMapperTest {
 	private static TestDomain vo2;
 	private static TestDomain vo3;
 	
-	@Autowired
-	TestMapper testMapper;
+	@Autowired TestMapper testMapper;
 	
 	@BeforeClass
 	public static void setUp() {	
@@ -51,8 +50,4 @@ public class TestMapperTest {
 		assertTrue( list.size() == 1);
 		assertTrue( list.get(0).getId() == 1);		
 	}
-	
-	
-	
-
 }
