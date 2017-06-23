@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.util.Assert;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations="junit.xml")
@@ -55,5 +56,29 @@ public class JUnitTest {
 		testObjects.add(this);
 		
 		assertThat( contextObject, either(is(nullValue())).or(is(this.context)));		
+	}
+	
+//	@Test
+//	public void assertTest() {
+//		String test = null;
+//		Assert.notNull(test,"test must be not null");
+//	}
+	
+	@Test
+	public void lowCaseTest() {
+		// 1) 대문자 인경우
+		// 2) 대문자 X
+		// 2-1 ) 소문자
+		// 2-2 ) 특수문자
+		assertTrue( 'a' == toLowerCase('A'));
+		assertThat('a',is('a'));
+		assertThat('!',is('!'));
+	}
+	
+	private char toLowerCase(char ch) {
+		if(ch >= 'A' && ch <= 'Z') {
+			return (char)(ch + 'a' - 'A');
+		}
+		return ch;
 	}
 }
