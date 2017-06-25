@@ -38,7 +38,7 @@
 <table>
 	<tr>
 		<th>test package</th>
-		</td>
+		<td>
 			in src/test/java
 			com.test.reflectiontest.*
 		</td>
@@ -53,13 +53,13 @@
 <table>
 	<tr>
 		<th>annotation</th>
-		</td>com.test.config.ProfileConfig</td>
+		<td>com.test.config.ProfileConfig</td>
 		<th>xml</th>
-		</td>WEB-INF/spring/persistence-context.xml</td>
+		<td>WEB-INF/spring/persistence-context.xml</td>
 		<th>state</th>
-		</td>com.test.domain.EnvProfile</td>
+		<td>com.test.domain.EnvProfile</td>
 		<th>active</th>
-		</td>web.xml</td>
+		<td>web.xml</td>
 		<th>JUnit</th>
 		<td>
 			in src/test/java<br>
@@ -74,14 +74,14 @@
 <table>
 	<tr>
 		<th>properties</th>
-		</td>
+		<td>
 			in src/main/resources <br>
 			test.properties <br>
 			in src/test/java <br>
 			com.test.configtest.PropertiesTest
 		</td>
 		<th>xml</th>
-		</td>
+		<td>
 			in src/main/resources <br>
 			test_config.xml <br>
 			in src/test/java <br>
@@ -97,14 +97,34 @@
 <table>
 	<tr>
 		<th>test</th>
-		</td>
+		<td>
 			in src/test/java <br>
 			com.test.etc.ClassResourceTest	
 		</td>
 	</tr>
 </table>
 
+---
 
+# Bean init test
+
+<table>
+	<tr>
+		<th>configuration</th>
+		<td>com.test.config.TestConfig</td>
+	</tr>
+	<tr>
+		<th>bean</th>
+		<td>com.test.domain.TestBean</td>
+	</tr>
+	<tr>
+		<th>JUnit TEST</th>
+		<td>
+			in src/test/java <br>
+			com.test.etc.BeanTest
+		</td>
+	</tr>
+</table>
 
 
 
@@ -134,6 +154,6 @@
 <table>
 	<tr>
 		<th></th>
-		</td></td>
+		<td></td>
 	</tr>
 </table>
