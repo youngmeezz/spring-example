@@ -67,8 +67,7 @@ public class UserDaoTest {
 		assertThat(user1.getName(), is(user2.getName()));
 		assertThat(user1.getPassword(), is(user2.getPassword()));
 	}
-	
-	
+		
 	@Test 
 	public void andAndGet() throws SQLException {
 		dao.deleteAll();

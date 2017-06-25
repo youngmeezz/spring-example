@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.Map;
 
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.support.SQLErrorCodes;
 
 import springbook.user.domain.User;
 
@@ -17,7 +18,7 @@ public class UserMapper implements RowMapper<User> {
 	
 	@Override
 	public User mapRow(ResultSet rs, int rowNum) throws SQLException {
-		
+		SQLErrorCodes s;
 		return null;
 	}
 	

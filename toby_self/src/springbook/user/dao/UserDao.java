@@ -6,10 +6,12 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
 import springbook.user.domain.User;
+import springbook.user.exception.DuplicatedUserIdException;
 
 public class UserDao {		
 	private JdbcTemplate jdbcTemplate;
@@ -28,18 +30,21 @@ public class UserDao {
 	public void setDataSource(DataSource dataSource) {
 		jdbcTemplate = new JdbcTemplate(dataSource);
 	}
-	
-	/**
-	 * User 등록
-	 * @param user
-	 * @throws SQLException
-	 */
-	public void add(final User user) throws SQLException {
-		this.jdbcTemplate.update("insert into users(id, name, password) values(?,?,?)",user.getId(), user.getName(), user.getPassword() );		
+			
+	public void add(final User user) throws DuplicatedUserIdException {
+		try {
+			this.jdbcTemplate.update("insert into users(id, name, password) values(?,?,?)",
+					user.getId(), user.getName(), user.getPassword() );
+		}
+		catch(DuplicateKeyException e) {
+			// 로그를 남기는 등의 필요한 작업
+			// 예외를 전환할때는 원인이 되는 예외를 중첩하는 것이 좋음
+			throw new DuplicatedUserIdException(e);
+		}
 	}
 		
 	
-	public User get(String id) throws SQLException {
+	public User get(String id) {
 		return jdbcTemplate.queryForObject("select * from users where id = ?",new Object[] {id},userMapper);		
 	}
 		
@@ -58,7 +63,7 @@ public class UserDao {
 		this.jdbcTemplate.update("delete from users");
 	}
 		
-	public int getCount() throws SQLException {
+	public int getCount() {
 //		return this.jdbcTemplate.query(
 //			new PreparedStatementCreator() {
 //				@Override
