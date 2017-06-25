@@ -39,7 +39,7 @@
 	<tr>
 		<th>test package</th>
 		<td>
-			in src/test/java
+			in src/test/java <br>
 			com.test.reflectiontest.*
 		</td>
 	</tr>
@@ -54,12 +54,20 @@
 	<tr>
 		<th>annotation</th>
 		<td>com.test.config.ProfileConfig</td>
+	</tr>
+	<tr>
 		<th>xml</th>
 		<td>WEB-INF/spring/persistence-context.xml</td>
+	</tr>
+	<tr>
 		<th>state</th>
 		<td>com.test.domain.EnvProfile</td>
+	</tr>
+	<tr>
 		<th>active</th>
 		<td>web.xml</td>
+	</tr>
+	<tr>
 		<th>JUnit</th>
 		<td>
 			in src/test/java<br>
@@ -80,6 +88,8 @@
 			in src/test/java <br>
 			com.test.configtest.PropertiesTest
 		</td>
+	</tr>
+	<tr>
 		<th>xml</th>
 		<td>
 			in src/main/resources <br>
