@@ -4,9 +4,8 @@
 		<test1>
 			<use>true</use>
 		</test1>
-		
 		<test2>
 			<use>false</use>
-		</test2>	
+		</test2>
 	</function>
 </general>
