@@ -34,7 +34,7 @@ public class CachingConfig {
 	
 	// Configure EhCacheCacheManager
 	@Bean
-	public EhCacheCacheManager cacheManager(CacheManager cm) {
+	public EhCacheCacheManager cacheManager(CacheManager cm) {		
 		return new EhCacheCacheManager(cm);
 	}
 	
