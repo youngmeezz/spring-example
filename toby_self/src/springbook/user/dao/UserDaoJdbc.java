@@ -13,7 +13,7 @@ import org.springframework.jdbc.core.RowMapper;
 import springbook.user.domain.User;
 import springbook.user.exception.DuplicatedUserIdException;
 
-public class UserDao {		
+public class UserDaoJdbc implements UserDao {		
 	private JdbcTemplate jdbcTemplate;
 	private RowMapper<User> userMapper = new RowMapper<User>() {
 		@Override
@@ -25,58 +25,34 @@ public class UserDao {
 			return user;
 		}
 	};
-	
-	
+		
 	public void setDataSource(DataSource dataSource) {
 		jdbcTemplate = new JdbcTemplate(dataSource);
 	}
-			
-	public void add(final User user) throws DuplicatedUserIdException {
-		try {
-			this.jdbcTemplate.update("insert into users(id, name, password) values(?,?,?)",
-					user.getId(), user.getName(), user.getPassword() );
-		}
-		catch(DuplicateKeyException e) {
-			// 로그를 남기는 등의 필요한 작업
-			// 예외를 전환할때는 원인이 되는 예외를 중첩하는 것이 좋음
-			throw new DuplicatedUserIdException(e);
-		}
-	}
-		
 	
+	@Override
+	public void add(final User user) {
+		this.jdbcTemplate.update("insert into users(id, name, password) values(?,?,?)",
+				user.getId(), user.getName(), user.getPassword() );
+	}		
+	
+	@Override
 	public User get(String id) {
 		return jdbcTemplate.queryForObject("select * from users where id = ?",new Object[] {id},userMapper);		
 	}
 		
+	@Override
 	public List<User> getAll() {
 		return this.jdbcTemplate.query("select * from users order by id", userMapper);
 	}
 	
-	public void deleteAll() throws SQLException {		
-//		this.jdbcTemplate.update( new PreparedStatementCreator() {
-//			@Override
-//			public PreparedStatement createPreparedStatement(Connection con) throws SQLException {				
-//				return con.prepareStatement("delete from users");
-//			}
-//			
-//		});		
+	@Override
+	public void deleteAll() {	
 		this.jdbcTemplate.update("delete from users");
 	}
-		
+	
+	@Override		
 	public int getCount() {
-//		return this.jdbcTemplate.query(
-//			new PreparedStatementCreator() {
-//				@Override
-//				public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
-//					return con.prepareStatement("select count(*) from users");
-//				}
-//			}, new ResultSetExtractor<Integer>() {
-//				@Override
-//				public Integer extractData(ResultSet rs) throws SQLException, DataAccessException {
-//					rs.next();
-//					return rs.getInt(1);
-//				}
-//		});		
 		return this.jdbcTemplate.queryForInt("select count(*) from users");		
 	}
 }
