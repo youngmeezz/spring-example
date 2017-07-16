@@ -53,4 +53,14 @@ public class HomeController {
 		return "test";
 	}
 	
+	@RequestMapping("/echo-ws-form")
+	public String echoView() {
+		return "echo-ws";
+	}
+	
+	@RequestMapping("/chat-ws-form")
+	public String chatView() {
+		return "chat-ws";
+	}
+	
 }

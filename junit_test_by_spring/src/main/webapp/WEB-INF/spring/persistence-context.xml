@@ -9,9 +9,9 @@
 	<beans>
 		<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource" >
 			<property name="driverClassName" value="net.sf.log4jdbc.sql.jdbcapi.DriverSpy" />
-			<property name="url" value="${oracle.db.url}"></property>
-			<property name="username" value="${oracle.db.username}"></property>
-			<property name="password" value="${oracle.db.password}"></property>
+			<property name="url" value="${db.url}"></property>
+			<property name="username" value="${db.username}"></property>
+			<property name="password" value="${db.password}"></property>
 		</bean>
 		
 		<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
@@ -55,6 +55,7 @@
 		<tx:annotation-driven/>
 	</beans>
 	
+	<!-- 
 	<beans profile="mysql">
 		<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource" >
 			<property name="driverClassName" value="net.sf.log4jdbc.sql.jdbcapi.DriverSpy" />
@@ -77,5 +78,6 @@
 			<property name="dataSource" ref="dataSource"/>		
 		</bean>	
 		<tx:annotation-driven/>
-	</beans>		
+	</beans>
+	 -->		
 </beans>

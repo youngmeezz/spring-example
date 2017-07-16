@@ -168,6 +168,26 @@
 </table>
 
 
+#WebSocket
+
+<table>
+	<tr>
+		<th>Configurer</th>
+		<td>			
+			WEB-INF/spring/ws.context.xml (XML)<br>
+			com.test.config.WsConfig (Java)									
+		</td>
+		<th>Handler</th>
+		<td>
+			com.test.ws.* <br>
+		</td>
+		<th>View</th>
+		<td>
+			WEB-INF/views/echo-ws.jsp<br>
+			WEB-INF/views/chat-ws.jsp<br>
+		</td>
+	</tr>
+</table>
 
 
 

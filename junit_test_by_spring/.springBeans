@@ -8,6 +8,7 @@
 	<enableImports><![CDATA[true]]></enableImports>
 	<configs>
 		<config>src/main/webapp/WEB-INF/spring/persistence-context.xml</config>
+		<config>src/main/webapp/WEB-INF/spring/ws-context.xml</config>
 	</configs>
 	<autoconfigs>
 	</autoconfigs>
