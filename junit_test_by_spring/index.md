@@ -190,7 +190,42 @@
 </table>
 
 
-
+#Security
+<table>
+	<tr>
+		<th>Configurer</th>
+		<td>
+			security-context.xml <br />
+			com.test.config.SecurityConfig.java
+		</td>		
+	</tr>
+	<tr>
+		<th>CustomService</th>
+		<td>
+			com.test.security.*
+		</td>
+	</tr>
+	<tr>
+		<th>domain</th>
+		<td>
+			com.test.domain.Admin
+		</td>
+	</tr>
+	<tr>
+		<th>Repository</th>
+		<td>
+			com.test.repository.AdminMemoryRepository
+		</td>
+	</tr>
+	<tr>
+		<th>FilterChain</th>
+		<td>web.xml</td>
+	</tr>
+	<tr>
+		<th></th>
+		<td></td>
+	</tr>
+</table>
 
 
 
