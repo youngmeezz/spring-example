@@ -177,10 +177,14 @@
 			WEB-INF/spring/ws.context.xml (XML)<br>
 			com.test.config.WsConfig (Java)									
 		</td>
+	</tr>
+	<tr>
 		<th>Handler</th>
 		<td>
 			com.test.ws.* <br>
 		</td>
+	</tr>
+	<tr>
 		<th>View</th>
 		<td>
 			WEB-INF/views/echo-ws.jsp<br>
@@ -189,6 +193,7 @@
 	</tr>
 </table>
 
+---
 
 # Security
 <table>
@@ -227,7 +232,7 @@
 	</tr>
 </table>
 
-
+---
 
 # Elastic Search
 <table>
@@ -265,8 +270,24 @@
 	</tr>
 </table>
 
+---
 
+# Request Mapping 
 
+<table>
+	<tr>
+		<th>Controller</th>
+		<td>
+			com.test.controller.FrontController
+		</td>
+	</tr>
+	<tr>
+		<th>View(JSP)</th>
+		<td>
+			/views/mappingTest
+		</td>
+	</tr>	
+</table>
 
 
 
@@ -280,6 +301,18 @@
 
 
 <table>
+	<tr>
+		<th></th>
+		<td></td>
+	</tr>
+	<tr>
+		<th></th>
+		<td></td>
+	</tr>
+	<tr>
+		<th></th>
+		<td></td>
+	</tr>
 	<tr>
 		<th></th>
 		<td></td>
