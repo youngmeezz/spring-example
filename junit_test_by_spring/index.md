@@ -229,6 +229,42 @@
 
 
 
+#Elastic Search
+<table>
+	<tr>
+		<th>Config</th>
+		<td>
+			com.test.config.EsConfig.java <br />
+			resources/elasticsearch.properties
+		</td>
+	</tr>
+	<tr>
+		<th>entities</th>
+		<td>
+			com.test.domain.EsBook<br />
+			com.test.domain.EsAuthor<br />
+		</td>
+	</tr>
+	<tr>
+		<th>service</th>
+		<td>
+			com.test.service.EsBookService
+		</td>
+	</tr>		
+	<tr>
+		<th>Test Code</th>
+		<td>
+			in test, com.test.repository.EsRepositoryTest.java
+		</td>
+	</tr>
+	<tr>
+		<th>Learning Test Code</th>
+		<td>
+			in test, com.test.es.*
+		</td>
+	</tr>
+</table>
+
 
 
 

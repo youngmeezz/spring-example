@@ -29,9 +29,6 @@ public class AopConfig {
 		return new Audience3();
 	}
 	
-	
-	
-	
 	@Bean
 	public Performance performance() {
 		return new Performance();
