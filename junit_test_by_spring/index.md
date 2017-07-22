@@ -168,7 +168,7 @@
 </table>
 
 
-#WebSocket
+# WebSocket
 
 <table>
 	<tr>
@@ -190,7 +190,7 @@
 </table>
 
 
-#Security
+# Security
 <table>
 	<tr>
 		<th>Configurer</th>
@@ -229,7 +229,7 @@
 
 
 
-#Elastic Search
+# Elastic Search
 <table>
 	<tr>
 		<th>Config</th>
@@ -239,14 +239,14 @@
 		</td>
 	</tr>
 	<tr>
-		<th>entities</th>
+		<th>Entities</th>
 		<td>
 			com.test.domain.EsBook<br />
 			com.test.domain.EsAuthor<br />
 		</td>
 	</tr>
 	<tr>
-		<th>service</th>
+		<th>Service</th>
 		<td>
 			com.test.service.EsBookService
 		</td>
