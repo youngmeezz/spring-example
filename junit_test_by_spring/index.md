@@ -290,6 +290,23 @@
 </table>
 
 
+# Check browser and history.go() 
+
+<table>
+	<tr>
+		<th>Controller</th>
+		<td>
+			com.test.controller.CheckBrowserController
+		</td>
+	</tr>
+	<tr>
+		<th>View(JSP)</th>
+		<td>
+			/views/form <br/>
+			/views/notice
+		</td>
+	</tr>	
+</table>
 
 
 

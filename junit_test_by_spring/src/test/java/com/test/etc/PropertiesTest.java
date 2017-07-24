@@ -22,10 +22,8 @@ public class PropertiesTest {
 		employee.setPropertyValue(new PropertyValue("salary","100"));
 		company.setPropertyValue("managingDirector",employee.getWrappedInstance());
 		
-		System.out.println(company.getWrappedInstance());
-		
+		System.out.println(company.getWrappedInstance());		
 	}
-
 }
 
 //////////////////////////////
