@@ -16,7 +16,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
+import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.core.query.GetQuery;
 import org.springframework.data.elasticsearch.core.query.IndexQuery;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
@@ -34,7 +34,7 @@ public class QueryLearningTest {
 	TestDomain testDomain3;
 	TestDomain testDomain4;
 	
-	@Inject ElasticsearchOperations elasticsearchTemplate;
+	@Inject ElasticsearchTemplate elasticsearchTemplate;
 	
 	@Before public void setUp() {
 		testDomain1 = new TestDomain();
@@ -61,7 +61,7 @@ public class QueryLearningTest {
 	/**
 	 * 인덱스로 읽기
 	 */
-	//@Test
+	@Test
 	public void readByIndex() {
 		 SearchQuery searchQuery = new NativeSearchQueryBuilder()
 			      					.withQuery(QueryBuilders.matchAllQuery())
