@@ -84,6 +84,24 @@ public class NestedTest {
 	}
 	
 	@Test
+	public void extractField() {
+		QueryBuilder builder = QueryBuilders.boolQuery()
+				.must(QueryBuilders.termQuery("ip", "127.0.0.1"))
+				.must(QueryBuilders.nestedQuery("repositories", QueryBuilders.boolQuery()
+							.must(QueryBuilders.termQuery("repositories.ip", "127.0.0.3"))
+							.must(QueryBuilders.boolQuery()
+									.should(QueryBuilders.termQuery("repositories.labels", "account"))
+				)));
+		SearchQuery searchQuery = new NativeSearchQueryBuilder()
+								.withQuery(builder)
+								.withFields("repositories")
+								.build();
+		List<Access> list = template.queryForList(searchQuery,Access.class);
+		System.out.println(list.size());
+		list.forEach((k) -> {System.out.println(k);});
+	}
+	
+	// @Test
 	public void search() {
 		QueryBuilder builder = QueryBuilders.boolQuery()
 				.must(QueryBuilders.termQuery("ip", "127.0.0.1"))
@@ -98,7 +116,7 @@ public class NestedTest {
 								//.withIndices("data")
 								//.withTypes("access")
 								.withFields("repositories.values")
-								.build();		
+								.build();
 		System.out.println("## [SearchQuery]\n"+searchQuery.getQuery().toString());		
 		//System.out.println(template.count(searchQuery));
 		List<Access> list = template.queryForList(searchQuery, Access.class);
