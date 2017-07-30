@@ -21,17 +21,26 @@
 			// 일반 웹소켓
 			//wsocket = new WebSocket("ws://localhost:8080/echo-ws");
 			// SocketJS
-			wsocket = new SockJS("http://localhost:8080/echo.socketjs");
+			wsocket = new SockJS("http://localhost:18080/echo.socketjs");
 			wsocket.onmessage = onMessage;
 			wsocket.onclose = onClose;
-			wsocket.onopen = function(){ //서버에 연결되면 실행
+			wsocket.onopen = function() { //서버에 연결되면 실행
 				wsocket.send($('#message').val()); // 서버에 메시지 전송
 			};
 		};
 		
 		function onMessage(e) {
-			var data = e.data;
-			alert('받음 : ' + data);
+			/* TEST TEXT MESSAGE*/
+			/* var data = e.data;
+			alert('받음 : ' + data); */
+			
+			
+			/* TEST TEXT MESSAGE -> JSON */
+			//var admin = eval('(' + e.data + ')'); // success			
+			var admin = JSON.parse(e.data);
+			var id = admin.id;
+			var password = admin.password;
+			alert('id = ' + id + ', pw : ' + password);
 			wsocket.close();
 		};
 		

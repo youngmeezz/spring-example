@@ -9,8 +9,8 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 import com.test.ws.ChatWebSocketHandler;
 import com.test.ws.EchoHandler;
 
-//@Configuration
-//@EnableWebSocket
+@Configuration
+@EnableWebSocket
 public class WsConfig implements WebSocketConfigurer {
 	@Override
 	public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {

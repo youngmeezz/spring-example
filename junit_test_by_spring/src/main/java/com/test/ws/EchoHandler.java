@@ -10,6 +10,9 @@ import org.springframework.web.socket.WebSocketMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+import com.google.gson.Gson;
+import com.test.domain.Admin;
+
 public class EchoHandler extends TextWebSocketHandler/* Text 데이터 주고 받을 때 */ {
 	private static final Logger logger = LoggerFactory.getLogger(EchoHandler.class);
 	
@@ -24,16 +27,21 @@ public class EchoHandler extends TextWebSocketHandler/* Text 데이터 주고 �
 	/*
 	  웹소켓 클라이언트가 데이터를 전송하면 호출. message는 클라이언트가 전송한 데이터를 담고 있음.
 	 */
-	@Override
+/*	@Override
 	public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
 		this.handleTextMessage(session, (TextMessage)message);
-	}	
+	}	*/
 	
 	@Override
 	protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {		
 		String receive = "[session id] : "+ session.getId() + " , [payload] :  " + message.getPayload();
 		logger.info("## " + receive);
-		session.sendMessage(new TextMessage("echo : " + message.getPayload()));
+		//session.sendMessage(new TextMessage("echo : " + message.getPayload()));
+		// test json
+		Admin admin = new Admin();
+		admin.setId("adminId");
+		admin.setPassword("adminPassword");		
+		session.sendMessage(new TextMessage(new Gson().toJson(admin)));
 	}
 	
 	/*
