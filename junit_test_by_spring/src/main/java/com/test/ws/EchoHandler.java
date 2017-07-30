@@ -1,12 +1,12 @@
 package com.test.ws;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
-import org.springframework.web.socket.WebSocketMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
@@ -33,9 +33,14 @@ public class EchoHandler extends TextWebSocketHandler/* Text 데이터 주고 �
 	}	*/
 	
 	@Override
-	protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {		
-		String receive = "[session id] : "+ session.getId() + " , [payload] :  " + message.getPayload();
-		logger.info("## " + receive);
+	protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
+		System.out.println("receive");
+		// receive
+		logger.info("## [receive from client] session id : {} , payload{}", new Object[]{session.getId(), message.getPayload()} );
+		Integer[] ids = new Gson().fromJson(message.getPayload(), new Integer[]{}.getClass());
+		logger.info("## [ids] : {}",Arrays.toString(ids));
+		
+		// send
 		//session.sendMessage(new TextMessage("echo : " + message.getPayload()));
 		// test json
 		Admin admin = new Admin();

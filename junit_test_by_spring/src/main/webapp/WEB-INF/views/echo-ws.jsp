@@ -25,7 +25,16 @@
 			wsocket.onmessage = onMessage;
 			wsocket.onclose = onClose;
 			wsocket.onopen = function() { //서버에 연결되면 실행
-				wsocket.send($('#message').val()); // 서버에 메시지 전송
+				//wsocket.send($('#message').val()); // 서버에 메시지 전송				
+				var ids = [];
+				/* ids.push(1);
+				ids.push(2);
+				ids.push(3); */
+				ids.push('1');
+				ids.push('2');
+				ids.push('3');
+				console.log(ids);
+				wsocket.send(JSON.stringify(ids)); // 서버에 메시지 전송
 			};
 		};
 		
