@@ -5,8 +5,11 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
+import com.test.domain.ElDomain;
 
 @Controller
 public class FrontController {
@@ -41,4 +44,19 @@ public class FrontController {
 		}
 		return "mappingTest";
 	}
+	
+	@RequestMapping(value="/el-test", method=RequestMethod.GET)
+	public String elTest(Model model) {		
+		ElDomain domain = new ElDomain();
+		model.addAttribute("elDomain",domain);
+		return "elTest";
+	}
+	
+	@RequestMapping(value="/el-test", method=RequestMethod.POST)
+	public String elTestPost(ElDomain paramDomain, Model model) {
+		logger.debug("## [param domain] : {}" , paramDomain);
+		return "redirect:/el-test";
+	}
+	
+	
 }
