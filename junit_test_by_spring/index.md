@@ -309,7 +309,22 @@
 </table>
 
 
-
+# Jackson2 Learning Test
+<table>
+	<tr>
+		<th>pom.xml</th>
+		<td>
+			dependency
+		</td>
+	</tr>
+	<tr>
+		<th>Learning Test</th>
+		<td>
+			in src/test/java <br/>
+			com.test.json.JacksonDatabindTest
+		</td>
+	</tr>	
+</table>
 
 
 

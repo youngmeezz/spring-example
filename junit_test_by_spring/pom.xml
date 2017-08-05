@@ -243,6 +243,15 @@
 			<version>2.8.0</version>
 		</dependency>
 		
+		<!-- lombok -->
+		<!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
+		<dependency>
+		    <groupId>org.projectlombok</groupId>
+		    <artifactId>lombok</artifactId>
+		    <version>1.16.18</version>
+		</dependency>
+		
+		
 		
 		<!-- security -->
 		<dependency>
