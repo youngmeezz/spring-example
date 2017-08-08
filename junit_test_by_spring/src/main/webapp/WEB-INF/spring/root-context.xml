@@ -18,7 +18,9 @@
 		
     
 	<!-- Enable caching -->
+	<!-- 
 	<cache:annotation-driven/>
+	 -->
     
 	<mybatis-spring:scan base-package="com.test.persistence"/>
 	<context:component-scan base-package="com.test.persistence" />

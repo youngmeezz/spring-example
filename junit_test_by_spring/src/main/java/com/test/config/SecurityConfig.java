@@ -12,8 +12,7 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-	private static final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
-	
+	private static final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		logger.debug("## [init security config]");
