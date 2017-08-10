@@ -13,6 +13,7 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.data.domain.PageRequest;
@@ -21,6 +22,7 @@ import org.springframework.data.elasticsearch.core.query.GetQuery;
 import org.springframework.data.elasticsearch.core.query.IndexQuery;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -62,6 +64,7 @@ public class QueryLearningTest {
 	 * 인덱스로 읽기
 	 */
 	@Test
+	@Ignore
 	public void readByIndex() {
 		 SearchQuery searchQuery = new NativeSearchQueryBuilder()
 			      					.withQuery(QueryBuilders.matchAllQuery())
@@ -77,7 +80,7 @@ public class QueryLearningTest {
 	/**
 	 *  페이징 처리
 	 */
-	//@Test
+	@Test
 	public void readByPageAndSort() {
 		SearchQuery searchQuery = new NativeSearchQueryBuilder()
 								.withQuery(QueryBuilders.matchAllQuery())
@@ -90,6 +93,7 @@ public class QueryLearningTest {
 	}
 	
 	@Test
+	@Ignore
 	public void searchByFiledValue() {
 		SearchQuery searchQuery = new NativeSearchQueryBuilder()
 								//.withQuery(QueryBuilders.termQuery("name","domain1")) // where name = 'domain1'

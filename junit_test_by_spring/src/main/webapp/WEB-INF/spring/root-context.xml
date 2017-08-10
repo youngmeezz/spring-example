@@ -14,7 +14,7 @@
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.3.xsd">
 	
 	<!-- Root Context: defines shared resources visible to all other web components -->
-	<context:property-placeholder location="classpath:/db.properties"/>
+	<context:property-placeholder location="classpath:db.properties"/>
 		
     
 	<!-- Enable caching -->
