@@ -227,13 +227,11 @@
 	});
 
 	var printData = function(replyArr, target, templateObject) {
-
 		var template = Handlebars.compile(templateObject.html());
 
 		var html = template(replyArr);
 		$(".replyLi").remove();
 		target.after(html);
-
 	}
 
 	var bno = ${boardVO.bno};//JSP에 처리되는 문자열로 해당 게시물의 번호
@@ -242,7 +240,7 @@
 
 	function getPage(pageInfo){
 		//특정 게시물에 대한 페이징 처리를 위해 호출되는 함수(내부적으로 jQuery를 이용해서 JSON타입의 데이터를 처리)	
-		$.getJSON(pageInfo,function(data){
+		$.getJSON(pageInfo,function(data) {
 			printData(data.list, $("#repliesDiv") ,$('#template'));
 			printPaging(data.pageMaker, $(".pagination"));
 			
