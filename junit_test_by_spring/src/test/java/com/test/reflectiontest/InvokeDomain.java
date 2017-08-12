@@ -16,13 +16,13 @@ public class InvokeDomain {
 		Class<?> clazz = this.getClass();
 		Method method = null;		
 		if(methodName.equals("invoke1")) {			
-			method = clazz.getMethod("invoke1", null);
-			return (String)method.invoke(this, null);			
+			method = clazz.getMethod("invoke1");
+			return (String)method.invoke(this);			
 		} else if(methodName.equals("invoke2")) {
-			method = clazz.getMethod("invoke2", null);
-			return (String)method.invoke(this, null);
+			method = clazz.getMethod("invoke2");
+			return (String)method.invoke(this);
 		} else {
 			return "not exist method name";
-		}		
+		}
 	}
 }
