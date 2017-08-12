@@ -6,34 +6,29 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class StringInvokerTest {
-    
-    @Test
-    public void stringMethods() {
-        Method[] methods = String.class.getDeclaredMethods();
-        for(Method method : methods) {
-            displayMethodInform(method);
-        }
-    }
-    
-    private void displayMethodInform(Method method) {
-        System.out.println("-----------------------------------------------------------");
-        System.out.println("getName() : " + method.getName());
-        Parameter[] params = method.getParameters();
-        if(params != null && params.length > 0) {
-            System.out.println("-- display getParameters() --");
-            for(Parameter param : params) {
-                System.out.println("\t param : " + param.getName() + ", "+param.getType().getName());
-            }
-        }
-        System.out.println("-----------------------------------------------------------");
-    }
-    
     //@Test
     public void test() throws Exception {
-        assertTrue(invoke1("test","test","contains"));
+        assertTrue(invoke3("test","test","equals"));
+        assertTrue(invoke3("test","te","contains"));
+    }
+    
+    private boolean invoke3(String invoker,String param,String methodName) throws Exception {        
+        Method method = String.class.getDeclaredMethod(methodName, Object.class);
+        if(method == null) {
+            System.out.println("not exist method : " + methodName);
+            return false;
+        }
+        
+        if(method.getReturnType() != Boolean.class && method.getReturnType() != boolean.class) {
+            System.out.println("not matched return type");
+            return false;
+        }
+        
+        return Boolean.valueOf(method.invoke(invoker, param).toString());                                
     }
     
     private boolean invoke2(String invoker,String param, String methodName) throws Exception {
@@ -73,6 +68,33 @@ public class StringInvokerTest {
             System.out.println(method.getName());
         }
         System.out.println("####################################################");
+    }
+    
+    @Test
+    //@Ignore
+    public void stringMethods() {
+        Method[] methods = String.class.getDeclaredMethods();
+        for(Method method : methods) {
+            displayMethodInform(method);
+        }
+    }
+    
+    private void displayMethodInform(Method method) {
+        System.out.println("check : " + method.getName());
+        if(method.getReturnType() != Void.class && method.getReturnType() != void.class) {
+            return;            
+        }
+        
+        System.out.println("-----------------------------------------------------------");
+        System.out.println("getName() : " + method.getName());
+        Parameter[] params = method.getParameters();
+        if(params != null && params.length > 0) {
+            System.out.println("-- display getParameters() --");
+            for(Parameter param : params) {
+                System.out.println("\t param : " + param.getName() + ", "+param.getType().getName());
+            }
+        }
+        System.out.println("-----------------------------------------------------------");
     }
 
 }
