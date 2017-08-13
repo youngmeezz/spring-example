@@ -327,6 +327,26 @@
 </table>
 
 
+
+# Annotation test
+
+<table>
+	<tr>
+		<th>package</th>
+		<td>com.test.annotation.*</td>
+	</tr>
+	<tr>
+		<th>Test</th>
+		<td>src/test/java <br />
+			com.test.annotation.AnnotationTest.java
+		</td>
+	</tr>	
+</table>
+
+---
+
+
+
 <table>
 	<tr>
 		<th></th>
