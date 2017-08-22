@@ -257,8 +257,14 @@
 			<artifactId>snakeyaml</artifactId>
 			<version>1.17</version>
 		</dependency>
-
-
+		
+		<!-- javaassist -->
+		<!-- https://mvnrepository.com/artifact/org.javassist/javassist -->
+		<dependency>
+			<groupId>org.javassist</groupId>
+			<artifactId>javassist</artifactId>
+			<version>3.21.0-GA</version>
+		</dependency>
 
 		<!-- security -->
 		<dependency>
