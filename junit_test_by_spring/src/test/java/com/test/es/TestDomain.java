@@ -10,7 +10,7 @@ import org.springframework.data.elasticsearch.annotations.Document;
 
 // - Document가 없으면 에러남
 // - indexName은 lowercase이여야함
-@Document(indexName="domain")
+@Document(indexName="domain", type="test")
 public class TestDomain {
 	@Id
 	private String id;	
