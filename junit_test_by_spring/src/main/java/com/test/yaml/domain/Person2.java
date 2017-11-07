@@ -1,4 +1,4 @@
-package com.test.domain.yaml;
+package com.test.yaml.domain;
 
 public class Person2 {
     public String given;

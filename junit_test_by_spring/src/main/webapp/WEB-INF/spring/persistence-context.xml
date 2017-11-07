@@ -8,7 +8,7 @@
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">	
 	<!-- data source -->
 	<beans>
-		<context:property-placeholder location="classpath:/properties/db.properties"/>
+		<context:property-placeholder location="classpath:/db.properties"/>
 		<bean id="dataSource"
 			class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 			<property name="driverClassName" value="net.sf.log4jdbc.sql.jdbcapi.DriverSpy" />

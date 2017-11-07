@@ -1,4 +1,4 @@
-package com.test.domain.yaml;
+package com.test.yaml.domain;
 
 import com.google.gson.Gson;
 

@@ -365,3 +365,37 @@
 		<td></td>
 	</tr>
 </table>
+
+
+---
+
+# Mockito Test 
+<table>
+	<tr>
+		<th>dependency</th>
+		<td>
+			- mockito-all <br>
+			- spring-test <br>
+			- junit			
+		</td>
+	</tr>
+	<tr>
+		<th>Controller</th>
+		<td>
+			- com.test.controller.UnitTestController<br>			
+		</td>
+	</tr>
+	<tr>
+		<th>Service</th>
+		<td> 
+			- com.test.service.UnitTestService
+		</td>
+	</tr>
+	<tr>
+		<th>Test</th>
+		<td> 
+			in src/test <br>
+			- com.test.controller.UnitTestControllerTest
+		</td>
+	</tr>	
+</table>

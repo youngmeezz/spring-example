@@ -14,9 +14,9 @@ import org.springframework.core.io.ClassPathResource;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 
-import com.test.domain.yaml.Config;
-import com.test.domain.yaml.Invoice;
-import com.test.domain.yaml.Person;
+import com.test.yaml.domain.Config;
+import com.test.yaml.domain.Invoice;
+import com.test.yaml.domain.Person;
 
 /**
  * Yamlk Class Mapping Test
