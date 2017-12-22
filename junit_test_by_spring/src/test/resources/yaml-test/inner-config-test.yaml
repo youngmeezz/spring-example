@@ -1,9 +1,0 @@
-!!com.test.domain.yaml.Config
-  inner1: {
-    id: zaccoding, 
-    password: test
-  }
-  inner2: {
-    age: 19, 
-    name: zac
-  }

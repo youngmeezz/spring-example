@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<company>
+	<staff>
+		<firstname>zac</firstname>
+		<lastname>coding</lastname>
+		<age>19</age>
+	</staff>
+	<staff>
+		<firstname>kim</firstname>
+		<lastname>coding</lastname>
+		<age>22</age>
+	</staff>
+</company>

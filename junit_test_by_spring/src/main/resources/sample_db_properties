@@ -1,5 +1,0 @@
--# db connection
-db.driver=oracle.jdbc.driver.OracleDriver
-db.url=jdbc:oracle:thin:@IP:1521:XE
-db.username=
-db.password=
