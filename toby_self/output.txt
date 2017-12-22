@@ -1,7 +1,0 @@
-&lt;bean id=&quot;userService&quot; class=&quot;springbook.user.service.UserService&quot;&gt;
-		&lt;property name=&quot;userDao&quot; ref=&quot;userDao&quot; /&gt;
-&lt;/bean&gt;
-	
-&lt;bean id=&quot;userDao&quot; class=&quot;springbook.user.dao.UserDaoJdbc&quot;&gt;
-	&lt;property name=&quot;dataSource&quot; ref=&quot;dataSource&quot; /&gt;		
-&lt;/bean&gt;
