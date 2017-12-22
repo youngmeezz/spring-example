@@ -19,11 +19,35 @@
 	<beans:bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<beans:property name="prefix" value="/WEB-INF/views/" />
 		<beans:property name="suffix" value=".jsp" />
+		<beans:property name="order" value= "2" />
 	</beans:bean>
 	
-	<beans:bean id="" class="org.springframework.web.accept.ContentNegotiationManagerFactoryBean">
-		
+	<beans:bean class="org.springframework.web.servlet.view.BeanNameViewResolver">
+		<beans:property name="order" value= "1" />
 	</beans:bean>
 	
+	
+	<!-- 
+	<beans:bean id="contentNegotiationManager" class="org.springframework.web.accept.ContentNegotiationManagerFactoryBean">
+        <beans:property name="defaultContentType" value="TEXT_HTML"/>
+        <beans:property name="parameterName" value="type"/>
+        <beans:property name="favorParameter" value="true"/>
+        <beans:property name="ignoreUnknownPathExtensions" value="false"/>
+        <beans:property name="useJaf" value="true"/>
+    </beans:bean>
+    
+    <view-resolvers>
+        <content-negotiation>
+            <default-views>
+                <beans:bean class="com.demo.view.XlsView"/>
+                <beans:bean class="com.demo.view.XlsxView"/>
+                <beans:bean class="com.demo.view.XlsxStreamingView"/>
+            </default-views>
+        </content-negotiation>
+        <jsp prefix="/WEB-INF/views/" suffix=".jsp"/>
+    </view-resolvers>
+     -->
+    
 	<context:component-scan base-package="com.demo.controller" />
+	<context:component-scan base-package="com.demo.view" />
 </beans:beans>

@@ -1,41 +1,60 @@
 package com.demo.controller;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.stream.IntStream;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import com.demo.domain.Customer;
 
+import lombok.extern.java.Log;
+
 @Controller
+@Log
 public class HomeController {
-	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
+	private List<Customer> customers = createCustomers();
 	
-	@ResponseBody
 	@GetMapping("/")
-	public ResponseEntity<String> home() {
-		return new ResponseEntity<>("HOME", HttpStatus.OK);
+	public String home() {
+		log.info("## request home");
+		return "main";
 	}
 	
-	
-	
-	public ModelAndView downloadExcel() {
-		ModelAndView mav = new ModelAndView("");
-		mav.addObject("list",createCustomers());
-		return mav;
+	@GetMapping(value="/excel-down/{type}")
+	public String downloadExcel(Model model, @PathVariable("type") String type) {
+		if(customers == null || customers.size() == 0) {
+			customers = createCustomers();
+		}		
+		model.addAttribute("customers", customers);
+		
+		String viewName = null;
+		if("xlsx".equals(type)) {
+			viewName = "xlsxView";
+		}
+		else if("xlsxStream".equals(type)) {
+			viewName = "xlsxStreamView";
+		}
+		else if("xlsView-basic".equals(type)) {
+			viewName = "xlsView-basic";
+		}
+		else {
+			viewName = "xlsView";
+		}		
+		
+		log.info("## [request excel-down] customers size : " + customers.size());
+		
+		return viewName;
 	}
 	
 	public List<Customer> createCustomers () {
 		final int size = 10;
 		List<Customer> customers = new ArrayList<>(size);
+		Calendar cal = Calendar.getInstance();
 		
 		IntStream.range(0, size).forEach(i -> {
 			Customer c = new Customer();
@@ -51,6 +70,10 @@ public class HomeController {
 				phone +=i;
 			}
 			c.setCellphone(phone);
+			
+			cal.set(Calendar.MONTH, i%12);
+			
+			c.setRegDate(cal.getTime());						
 			customers.add(c);
 		});
 		
