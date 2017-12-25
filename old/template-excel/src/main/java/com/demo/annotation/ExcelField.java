@@ -12,7 +12,10 @@ public @interface ExcelField {
 	 * Cell Name
 	 */
 	String cellValue() default "";
-	
+	/**
+	 * ClassType
+	 */
+	ExcelFieldType fieldType() default ExcelFieldType.Primitive;	
 	/**
 	 * Cell order (start :: 0)
 	 */
@@ -21,4 +24,8 @@ public @interface ExcelField {
 	 * Cell null able
 	 */
 	boolean notNull() default false;
+	/**
+	 * Regex
+	 */
+	String regex() default "";
 }

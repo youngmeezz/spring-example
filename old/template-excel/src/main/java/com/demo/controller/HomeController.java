@@ -1,7 +1,9 @@
 package com.demo.controller;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -11,13 +13,16 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import com.demo.domain.Customer;
+import com.demo.domain.Order;
+import com.demo.domain.Product;
+import com.demo.domain.ProductDetail;
 
 import lombok.extern.java.Log;
 
 @Controller
 @Log
 public class HomeController {
-	private List<Customer> customers = createCustomers();
+	private List<Order> orders = new ArrayList<>();
 	
 	@GetMapping("/")
 	public String home() {
@@ -26,11 +31,11 @@ public class HomeController {
 	}
 	
 	@GetMapping(value="/excel-down/{type}")
-	public String downloadExcel(Model model, @PathVariable("type") String type) {
-		if(customers == null || customers.size() == 0) {
-			customers = createCustomers();
-		}		
-		model.addAttribute("customers", customers);
+	public String downloadExcel(Model model, @PathVariable("type") String type) {	    
+		// model.addAttribute("datas", customers);
+	    
+	    model.addAttribute("datas", createOrders());
+		//model.addAttribute("datas", Arrays.asList(createOrders().get(0)));
 		
 		String viewName = null;
 		if("xlsx".equals(type)) {
@@ -46,44 +51,66 @@ public class HomeController {
 			viewName = "xlsView";
 		}		
 		
-		log.info("## [request excel-down] customers size : " + customers.size());
+		log.info("## [request excel-down] orders size : " + orders.size());
 		
 		return viewName;
 	}
 	
-	public List<Customer> createCustomers () {
-		final int size = 10;
-		List<Customer> customers = new ArrayList<>(size);
-		Calendar cal = Calendar.getInstance();
-		
-		IntStream.range(0, size).forEach(i -> {
-			Customer c = new Customer();
-			c.setSeq(i);
-			c.setName("customer" + i);
-			c.setEmail("customer" + i + "@github.com");
-			String phone = "010-";
-			for(int j=0;j<3;j++) {
-				phone +=i;
-			}
-			phone += "-";
-			for(int j=0;j<4;j++) {
-				phone +=i;
-			}
-			c.setCellphone(phone);
-			
-			cal.set(Calendar.MONTH, i%12);
-			
-			c.setRegDate(cal.getTime());						
-			customers.add(c);
-		});
-		
-		
-		return customers;		
+	public List<Order> createOrders() {
+	    if(orders.size() != 0) {
+	        return orders;
+	    }
+	    
+	    Calendar cal = Calendar.getInstance();
+        IntStream.range(1, 11).forEach(i -> {
+            Order order = new Order();
+            order.setOrderNumber(i);
+            order.setOrderDate(new Date());            
+            order.setCustomer(createCustomer(i, cal));
+            order.setProduct(createProduct(i));            
+            orders.add(order);
+        });	    
+	    
+	    return orders;
 	}
 	
-	
-	
-	
-	
-
+	private Customer createCustomer(int i, Calendar cal) {
+        Customer c = new Customer();
+        c.setSeq(i);
+        c.setName("customer" + i);
+        c.setEmail("customer" + i + "@github.com");
+        String phone = "010-";
+        for(int j=0;j<3;j++) {
+            phone +=i;
+        }
+        phone += "-";
+        for(int j=0;j<4;j++) {
+            phone +=i;
+        }
+        c.setCellphone(phone);
+        
+        cal.set(Calendar.MONTH, i%12);            
+        c.setRegDate(cal.getTime());
+        
+        return c;
+    }
+    
+    private Product createProduct(int i) {
+        Product p = new Product();
+        p.setPName("product" + i);
+        p.setPno((long)i);
+        p.setPrice(2000);
+        
+        // p.setDetail(createProductDetail());
+        
+        return p;
+    }
+    
+    private ProductDetail createProductDetail() {
+        ProductDetail p = new ProductDetail();
+        p.setCountry("country");
+        p.setManufacture("manufacture");
+        
+        return p;
+    }
 }

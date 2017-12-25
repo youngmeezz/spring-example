@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.PriorityQueue;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -21,10 +22,11 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.DateFormatConverter;
 
 import com.demo.annotation.ExcelField;
+import com.demo.annotation.ExcelFieldType;
 import com.demo.domain.ExcelPersistentEntity;
 
 public class ExcelWriteByReflection {
-	public static Map<Class<?>, List<ExcelPersistentEntity>> metaDataMap = new Hashtable<>();
+    public static ConcurrentHashMap<Class<?>, List<ExcelPersistentEntity>> metaDataMap = new ConcurrentHashMap<>(10);
 	
 	/*
 	public static void main(String[] args) {
@@ -54,7 +56,7 @@ public class ExcelWriteByReflection {
 			return;
 		}
 		
-		Class<T> clazz = (Class<T>)list.get(0).getClass();
+		Class<?> clazz = list.get(0).getClass();
 		System.out.println("## generic class T`s name : " + clazz.getName());
 		List<ExcelPersistentEntity> metaDatas = metaDataMap.get(clazz);
 		if(metaDatas == null) {
@@ -68,6 +70,10 @@ public class ExcelWriteByReflection {
 		}
 		else {
 			System.out.println("## cache used class : " + clazz.getName());
+		}
+		
+		for(ExcelPersistentEntity meta : metaDatas) {
+		    System.out.println(meta);
 		}
 		
 		// date format
@@ -141,38 +147,57 @@ public class ExcelWriteByReflection {
 	    }		
 	}
 	
+	public static List<ExcelPersistentEntity> putExcelMetaData(Class<?> clazz) {	    
+	    // sort ExcelPersistentEntity	    	    
+	    PriorityQueue<ExcelPersistentEntity> fieldQueue = createExcelPersistentQueue();
+	    sortExcelPersistent(0,clazz,fieldQueue);
+	    
+	    // parse fieldQueue > ExcelPersistentEntity
+	    if(fieldQueue.isEmpty()) {
+            return Collections.emptyList();
+        }
+	    
+        List<ExcelPersistentEntity> ret = new ArrayList<>(fieldQueue.size());        
+        while(!fieldQueue.isEmpty()) {
+            ret.add(fieldQueue.poll());
+        }
+        
+        return ret;
+	}
 	
-	public static List<ExcelPersistentEntity> putExcelMetaData(Class<?> clazz) {
-		// extract meta data
-		PriorityQueue<ExcelPersistentEntity> fieldQueue = new PriorityQueue<ExcelPersistentEntity>(new Comparator<ExcelPersistentEntity>() {
-			@Override
-			public int compare(ExcelPersistentEntity o1, ExcelPersistentEntity o2) {
-				return o1.getOrder() - o2.getOrder();
-			}
-		});
+	public static PriorityQueue<ExcelPersistentEntity> sortExcelPersistent(int depth, Class<?> clazz, PriorityQueue<ExcelPersistentEntity> fieldQueue) {
+	    if(fieldQueue == null) {
+	        fieldQueue = createExcelPersistentQueue();
+	    }
 
 		for (Field field : clazz.getDeclaredFields()) {
 			ExcelField excelField = field.getAnnotation(ExcelField.class);
 			if (excelField == null) {
 				continue;
+			}			
+			if(excelField.fieldType() == ExcelFieldType.Primitive) {
+			    ExcelPersistentEntity metaData = new ExcelPersistentEntity();
+	            metaData.setField(field);
+	            metaData.setOrder(excelField.cellOrder());
+	            metaData.setCellName(excelField.cellValue());
+	            metaData.setNotNull(excelField.notNull());
+	            fieldQueue.offer(metaData);			    
 			}
-			ExcelPersistentEntity metaData = new ExcelPersistentEntity();
-			metaData.setField(field);
-			metaData.setOrder(excelField.cellOrder());
-			metaData.setCellName(excelField.cellValue());
-			metaData.setNotNull(excelField.notNull());
-			fieldQueue.offer(metaData);
+			else if(excelField.fieldType() == ExcelFieldType.Object) {
+			    // recursive
+			    sortExcelPersistent(depth+1, field.getType(), fieldQueue);
+			}
 		}
 		
-		if(fieldQueue.isEmpty()) {
-			return Collections.emptyList();
-		}
-		
-		List<ExcelPersistentEntity> ret = new ArrayList<>(fieldQueue.size());
-		while(!fieldQueue.isEmpty()) {
-			ret.add(fieldQueue.poll());
-		}
-		
-		return ret;
-	}	
+		return fieldQueue;
+	}
+	
+	private static PriorityQueue<ExcelPersistentEntity> createExcelPersistentQueue() {     
+        return new PriorityQueue<ExcelPersistentEntity>(new Comparator<ExcelPersistentEntity>() {
+            @Override
+            public int compare(ExcelPersistentEntity o1, ExcelPersistentEntity o2) {
+                return o1.getOrder() - o2.getOrder();
+            }
+        });         
+    }
 }

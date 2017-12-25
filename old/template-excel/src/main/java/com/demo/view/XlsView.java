@@ -28,7 +28,7 @@ public class XlsView extends AbstractXlsView {
 		response.setHeader("Content-Disposition", "attachment;filename=\"my-xls-file.xls\"");
 		
 		@SuppressWarnings("unchecked")
-		List<Customer> customers = (List)model.get("customers");
+		List<Customer> customers = (List)model.get("datas");
 		
 		// create excel xls sheet
 		Sheet sheet = workbook.createSheet("Spring MVC AbstractXlsView");

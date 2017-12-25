@@ -14,10 +14,9 @@ public class Customer {
 	private String name;
 	@ExcelField(cellOrder = 2, cellValue ="Customers cell phone")
 	private String cellphone;
-	@ExcelField(cellOrder = 3, cellValue ="Customers Email")
+	@ExcelField(cellOrder = 3, cellValue ="Customers Email", regex="^[a-zA-Z0-9._-]+@[a-zA-Z0-9]+\\.[a-zA-Z]{2,6}$")
 	private String email;
 	@ExcelField(cellOrder = 4, cellValue ="Customers Reg date")
-	private Date regDate;
-	
+	private Date regDate;	
 	private String addr;
 }
