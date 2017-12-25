@@ -90,7 +90,7 @@ public class ExcelWriteByReflection {
 		int rowCnt = 0;
 		Row header = sheet.createRow(rowCnt++);
 		for(ExcelPersistentEntity metaData : metaDatas) {
-			header.createCell(metaData.getOrder()).setCellValue(metaData.getCellName());			
+			// header.createCell(metaData.getOrder()).setCellValue(metaData.getCellName());			
 		}
 		
 		// write inst datas
@@ -101,7 +101,8 @@ public class ExcelWriteByReflection {
 					Field field = metaData.getField();
 					field.setAccessible(true);
 					Object value = field.get(inst);
-					Cell cell = row.createCell(metaData.getOrder());
+					// Cell cell = row.createCell(metaData.getOrder());
+					Cell cell = row.createCell(0);
 					
 					// temp code :: check Object -> Cast
 					if(value instanceof Boolean) {
@@ -178,7 +179,7 @@ public class ExcelWriteByReflection {
 			if(excelField.fieldType() == ExcelFieldType.Primitive) {
 			    ExcelPersistentEntity metaData = new ExcelPersistentEntity();
 	            metaData.setField(field);
-	            metaData.setOrder(excelField.cellOrder());
+	            //metaData.setOrder(excelField.cellOrder());
 	            metaData.setCellName(excelField.cellValue());
 	            metaData.setNotNull(excelField.notNull());
 	            fieldQueue.offer(metaData);			    
@@ -196,7 +197,8 @@ public class ExcelWriteByReflection {
         return new PriorityQueue<ExcelPersistentEntity>(new Comparator<ExcelPersistentEntity>() {
             @Override
             public int compare(ExcelPersistentEntity o1, ExcelPersistentEntity o2) {
-                return o1.getOrder() - o2.getOrder();
+                //return o1.getOrder() - o2.getOrder();
+                return 1;
             }
         });         
     }

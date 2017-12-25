@@ -114,7 +114,7 @@ public class ExcelService {
                 field.setAccessible(true);
                 if(persistent.getFieldType() == ExcelFieldType.Primitive) {
                     if(persistent.getInvoker() != inst.getClass()) {                        
-                        return --readIdx;
+                        return readIdx - 1;
                     }
                     writeCell(field,inst,row, dateCellStyle);
                 }
@@ -214,7 +214,8 @@ public class ExcelService {
             }
             else if(excelField.fieldType() == ExcelFieldType.Primitive) {
                 metaData.setCellName(excelField.cellValue());
-                metaData.setNotNull(excelField.notNull());            
+                metaData.setNotNull(excelField.notNull());
+                metaData.setRegex(excelField.regex());
                 metaData.setInvoker(clazz);
                 ret.add(metaData);
             }
