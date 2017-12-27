@@ -1,7 +1,6 @@
 package com.demo.controller;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -11,6 +10,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import com.demo.domain.Customer;
 import com.demo.domain.Order;
@@ -29,6 +30,15 @@ public class HomeController {
 		log.info("## request home");
 		return "main";
 	}
+	
+	@PostMapping("/excel-down/test")
+	//@ResponseBody
+	public String downloadExcel2(Model model, @RequestBody String type) {
+		log.info("## [request /excel-down/test] type : " + type);		
+		model.addAttribute("datas", createOrders());
+		return "xlsView";
+	}
+	
 	
 	@GetMapping(value="/excel-down/{type}")
 	public String downloadExcel(Model model, @PathVariable("type") String type) {	    
