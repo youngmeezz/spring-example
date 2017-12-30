@@ -1,13 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:security="http://www.springframework.org/schema/security"
-	xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-5.0.xsd
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:sec="http://www.springframework.org/schema/security"
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xmlns:security="http://www.springframework.org/schema/security"
+	   xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.2.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
-		
-	
-	
+
+	<bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />
+	<bean id="memberDetailsService" class="com.demo.security.MemberDetailServiceImpl"/>
+	<bean id="memberAuthProvider" class="com.demo.security.MemberAuthProvider"/>
+	<bean id="authSuccessHandler" class="com.demo.security.AuthSuccessHandler" />
+
+	<sec:http auto-config="true" use-expressions="true">
+		<sec:intercept-url pattern="/resources/**" access="permitAll"/>
+		<sec:intercept-url pattern="/login" access="isAnonymous()" />
+		<sec:intercept-url pattern="/home" access="isAuthenticated()" />
+		<sec:intercept-url pattern="/**" access="permitAll" />
+
+		<sec:form-login
+				login-page="/login"
+				login-processing-url="/loginPOST"
+				username-parameter="loginid"
+				password-parameter="password"
+				authentication-success-handler-ref="authSuccessHandler"
+				authentication-failure-forward-url="/login?error=true"
+		/>
+		<sec:logout logout-url="/logout" logout-success-url="/home"/>
+	</sec:http>
+
+	<sec:authentication-manager >
+		<sec:authentication-provider ref="memberAuthProvider"/>
+		<sec:authentication-provider user-service-ref="memberDetailsService"/>
+	</sec:authentication-manager>
 
 </beans>

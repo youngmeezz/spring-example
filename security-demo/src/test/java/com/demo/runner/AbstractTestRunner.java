@@ -9,7 +9,8 @@ import org.springframework.test.context.web.WebAppConfiguration;
 @WebAppConfiguration
 @ContextConfiguration(locations = {
         "file:src/main/webapp/WEB-INF/config/root-context.xml",
-        "file:src/main/webapp/WEB-INF/config/persistent-context.xml"
+        "file:src/main/webapp/WEB-INF/config/persistent-context.xml",
+        "file:src/main/webapp/WEB-INF/config/security-context.xml"
         })
 public abstract class AbstractTestRunner {
     // empty

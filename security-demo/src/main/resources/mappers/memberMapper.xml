@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.demo.mapper.MemberMapper">
+    <resultMap id="resultMember" type="Member">
+        <result property="loginId" column="login_id" />
+        <result property="name" column="name" />
+        <result property="password" column="password" />
+        <result property="regDate" column="reg_date" />
+        <result property="modDate" column="mod_date" />
+        <collection property="roles" javaType="ArrayList" ofType="MemberRole" resultMap="resultRole" />
+    </resultMap>
+
+    <resultMap id="resultRole" type="MemberRole">
+        <result property="id" column="role_id"/>
+        <result property="roleName" column="role_name"/>
+        <result property="loginId" column="login_id"/>
+    </resultMap>
+
+    <insert id="saveRoles">
+        INSERT INTO tbl_member_roles (
+          role_name, login_id
+        )
+        VALUES
+        <foreach collection="roleNames" item="roleName" separator=",">
+            (#{roleName}, #{loginId})
+        </foreach>
+    </insert>
+
+    <select id="findById" parameterType="string" resultMap="resultMember">
+        SELECT
+          member.*, role.id role_id, role.role_name
+        FROM
+          tbl_members member
+        LEFT OUTER JOIN
+          tbl_member_roles role
+        ON
+          member.login_id = role.login_id
+        WHERE
+          member.login_id = #{loginId}
+    </select>
+
+</mapper>

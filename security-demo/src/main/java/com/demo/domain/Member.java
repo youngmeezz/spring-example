@@ -1,6 +1,7 @@
 package com.demo.domain;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -13,5 +14,6 @@ public class Member {
     private String loginId;
     private String name;
     private String password;
-    private LocalDateTime regDate;    
+    private LocalDateTime regDate;
+    private List<MemberRole> roles;
 }
