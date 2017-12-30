@@ -13,7 +13,10 @@ import org.springframework.web.servlet.view.document.AbstractXlsView;
 
 import com.demo.service.ExcelService;
 
+import lombok.extern.java.Log;
+
 @Component("xlsView")
+@Log
 public class XlsViewByUseReflect extends AbstractXlsView {
     @Autowired
     ExcelService excelService;
@@ -22,9 +25,9 @@ public class XlsViewByUseReflect extends AbstractXlsView {
 	protected void buildExcelDocument(Map<String, Object> model, Workbook workbook, HttpServletRequest request,
 									HttpServletResponse response) throws Exception {
 		
+		log.info("## [buildExcelDocument]");
 		// change the file name
-		response.setHeader("Content-Disposition", "attachment;filename=\"my-xls-file.xls\"");
-		
+		response.setHeader("Content-Disposition", "attachment;filename=\"my-xls-file.xls\"");		
 		excelService.buildDocument((List)model.get("datas"), workbook);
 	}
 }
