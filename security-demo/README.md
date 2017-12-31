@@ -40,7 +40,16 @@ CREATE TABLE tbl_member_roles (
 );
 
 -- board
-
+CREATE TABLE tbl_boards (
+  id bigint not null auto_increment,
+  title varchar(255),
+  content varchar(2000),
+  writer varchar(255),
+  reg_date timestamp default now(),
+  mod_date timestamp,
+  primary key(id),
+  foreign key(writer) references tbl_members(login_id) ON DELETE CASCADE ON UPDATE CASCADE
+);
 
 
 ```

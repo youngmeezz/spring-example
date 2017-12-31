@@ -12,12 +12,16 @@
 	<bean id="memberDetailsService" class="com.demo.security.MemberDetailServiceImpl"/>
 	<bean id="memberAuthProvider" class="com.demo.security.MemberAuthProvider"/>
 	<bean id="authSuccessHandler" class="com.demo.security.AuthSuccessHandler" />
+	<bean id="authAccessDeniedHandler" class="com.demo.security.AuthAccessDeniedHandler" />
 
 	<sec:http auto-config="true" use-expressions="true">
-		<sec:intercept-url pattern="/resources/**" access="permitAll"/>
+		<sec:access-denied-handler ref="authAccessDeniedHandler"/>
+
+		<sec:intercept-url pattern="/resources/**" access="permitAll()"/>
+		<sec:intercept-url pattern="/boards/**" access="permitAll()"/>
 		<sec:intercept-url pattern="/login" access="isAnonymous()" />
 		<sec:intercept-url pattern="/home" access="isAuthenticated()" />
-		<sec:intercept-url pattern="/**" access="permitAll" />
+		<sec:intercept-url pattern="/**" access="permitAll()" />
 
 		<sec:form-login
 				login-page="/login"
@@ -28,6 +32,7 @@
 				authentication-failure-forward-url="/login?error=true"
 		/>
 		<sec:logout logout-url="/logout" logout-success-url="/home"/>
+		<sec:csrf disabled="true"/>
 	</sec:http>
 
 	<sec:authentication-manager >
