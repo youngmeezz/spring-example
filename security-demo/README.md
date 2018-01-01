@@ -2,7 +2,10 @@
 
 #### index
 
-<a href="#database">Database</a>
+<a href="#database">Database</a>  
+<a href="">Security Settings</a>  
+<a href="">Limit Login Attempts</a>  
+<a href="">Logging for member`s action</a>  
 
 
 ---
@@ -22,7 +25,7 @@ GRANT ALL PRIVILEGES ON spring_demo.* to 'spring_user'@'localhost';
 > Create table
 
 ```
--- member
+# member
 CREATE TABLE tbl_members (
   login_id varchar(255) not null,
   name varchar(255) not null,
@@ -30,7 +33,7 @@ CREATE TABLE tbl_members (
   primary key(login_id)
 );
 
--- member roles
+# member roles
 CREATE TABLE tbl_member_roles (
   id bigint not null auto_increment,
   role_name varchar(255),
@@ -39,7 +42,7 @@ CREATE TABLE tbl_member_roles (
   foreign key(login_id) references tbl_members(login_id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
--- board
+# board
 CREATE TABLE tbl_boards (
   id bigint not null auto_increment,
   title varchar(255),
@@ -51,6 +54,14 @@ CREATE TABLE tbl_boards (
   foreign key(writer) references tbl_members(login_id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
+# login attempts
+create table login_attempts (
+    id bigint not null auto_increment,
+    ip varchar(128),
+    attempts int default 1, 
+    last_modified timestamp,
+    primary key(id)
+);
 
 ```
 

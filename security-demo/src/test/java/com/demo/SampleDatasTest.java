@@ -26,11 +26,11 @@ public class SampleDatasTest extends AbstractTestRunner {
     MemberService memberService;
     @Autowired
     PasswordEncoder passwordEncoder;
-
     List<Member> members;
+
     @Before
     public void setUp() {
-        // memberMapper.deleteAll();
+        memberMapper.deleteAll();
         members = new ArrayList<>();
 
         Member m1 = new Member();
@@ -46,10 +46,23 @@ public class SampleDatasTest extends AbstractTestRunner {
         m2.setName("writeUser");
         m2.setRoles(createRole(m2.getLoginId(), "read", "write"));
         members.add(m2);
+
+        Member m3 = new Member();
+        m3.setLoginId("modify");
+        m3.setPassword(passwordEncoder.encode("1234"));
+        m3.setName("modifyUser");
+        m3.setRoles(createRole(m3.getLoginId(), "read", "write", "modify"));
+        members.add(m3);
+
+        Member m4 = new Member();
+        m4.setLoginId("remove");
+        m4.setPassword(passwordEncoder.encode("1234"));
+        m4.setName("removeUser");
+        m4.setRoles(createRole(m4.getLoginId(), "read", "write", "modify", "remove"));
+        members.add(m4);
     }
 
     @Test
-    @Ignore
     public void createMembers() {
         for(Member m : members) {
             memberService.save(m);

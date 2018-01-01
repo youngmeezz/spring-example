@@ -12,9 +12,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 @Log
 public class LoginController {
-    @GetMapping("/login")
+    @GetMapping({"/login","/loginPage"})
     public String loginPage() {
         System.out.println("## login page request");
+        return "loginPage";
+    }
+
+    @GetMapping("/loginPOST")
+    public String loginFail() {
         return "loginPage";
     }
 }

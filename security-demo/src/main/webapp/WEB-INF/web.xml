@@ -12,6 +12,13 @@
 			/WEB-INF/config/security-context.xml
 		</param-value>
 	</context-param>
+
+	<!-- Set default profile for context -->
+	<context-param>
+		<param-name>spring.profiles.active</param-name>
+		<!-- profile 1)JavaConfig : config_java   2)XMLConfig : config_xml -->
+		<param-value>config_xml</param-value>
+	</context-param>
 	
 	<!-- Creates the Spring Container shared by all Servlets and Filters -->
 	<listener>

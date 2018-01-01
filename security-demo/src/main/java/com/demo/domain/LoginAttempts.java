@@ -16,10 +16,7 @@ import java.time.LocalDateTime;
 @ToString
 public class LoginAttempts {
     private Long id;
-
     private String ip;
-
     private int attempts;
-
     private LocalDateTime lastModified;
 }

@@ -6,6 +6,7 @@
 <body>
 <form action="/boards/modify" method="POST">
     <input type="hidden" name="id" value="${board.id}">
+    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
     <table style="width:60%;">
         <tr>
             <td>title</td>
