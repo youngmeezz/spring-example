@@ -17,6 +17,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Enumeration;
 
 /**
  * @author zacconding
@@ -37,12 +38,13 @@ public class AuthFailureHandler implements AuthenticationFailureHandler {
 
         String message = null;
         // Not exist id or Not matched password
-        if(exception instanceof LoginNotMatchedException || exception instanceof InternalAuthenticationServiceException) {
+        if(exception instanceof LoginNotMatchedException) {
+            logger.debug("## [tried to login but failed] id : {}", loginId);
             message = "Please confirm ur id and password";
-
         }
         // exceed login attempts
         else if(exception instanceof ExceedLoginAttemptsException) {
+            logger.debug("## [exceed login attempts] id : {}", loginId);
             isExceedAttempts = true;
             message = "Exceed login attempts. Please try again 5 minutes later";
         }
@@ -51,6 +53,9 @@ public class AuthFailureHandler implements AuthenticationFailureHandler {
                 logger.debug("## [not handle exception in auth failure handler] exception : {} , message : {}", new Object[] {
                         exception.getClass().getName(), exception.getMessage()
                 });
+            }
+            else {
+                logger.debug("## [cant handle login failure]");
             }
         }
 
@@ -71,6 +76,9 @@ public class AuthFailureHandler implements AuthenticationFailureHandler {
         // response.sendRedirect("/login");
         logger.debug("## request.getRequestURL() : {} ", request.getRequestURL());
         logger.debug("## request.getRequestURI() : {} " , request.getRequestURI());
-        request.getRequestDispatcher("/loginPage").forward(request,response);
+
+        // request.getRequestDispatcher("/loginPage").forward(request,response);
+        // request.getServletContext().getRequestDispatcher("/login").forward(request,response);
+        request.getRequestDispatcher("/WEB-INF/views/loginPage.jsp").forward(request,response);
     }
 }

@@ -17,7 +17,6 @@
 
 	<sec:http auto-config="true" use-expressions="true">
 		<sec:access-denied-handler ref="authAccessDeniedHandler"/>
-
 		<sec:intercept-url pattern="/resources/**" access="permitAll()"/>
 		<sec:intercept-url pattern="/login" access="isAnonymous()" />
 		<sec:intercept-url pattern="/home" access="isAuthenticated()" />
@@ -36,7 +35,7 @@
 				authentication-success-handler-ref="authSuccessHandler"
 				authentication-failure-handler-ref="authFailureHandler"
 		/>
-		<sec:logout logout-url="/logout" logout-success-url="/" />
+		<sec:logout logout-url="/logout" invalidate-session="true" logout-success-url="/" />
 		<!--
 		<sec:csrf disabled="true"/>
 		-->

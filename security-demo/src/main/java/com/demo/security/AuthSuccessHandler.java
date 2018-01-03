@@ -1,5 +1,6 @@
 package com.demo.security;
 
+import com.demo.domain.Member;
 import com.demo.security.domain.SecurityMember;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,8 +24,12 @@ public class AuthSuccessHandler extends SavedRequestAwareAuthenticationSuccessHa
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         Object securityMember = authentication.getPrincipal();
+
+        // set remote host
         if(securityMember instanceof SecurityMember) {
             logger.debug("## [success to auth] Security Member : {}", securityMember);
+            Member member  = ((SecurityMember) securityMember).getMember();
+            member.setIp(request.getRemoteHost());
         }
 
         super.onAuthenticationSuccess(request, response, authentication);

@@ -1,7 +1,12 @@
 package com.demo.controller;
 
+import com.demo.aop.MemberLoggings;
 import com.demo.domain.Board;
+import com.demo.domain.enums.MemberLogType;
 import com.demo.mapper.BoardMapper;
+import com.demo.security.SecurityUtil;
+import com.demo.thread.ThreadLocalContext;
+import com.demo.thread.ThreadLocalManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,9 +38,13 @@ public class BoardController {
         return "boards/list";
     }
 
+    @MemberLoggings(logType = MemberLogType.READ, useComment = true)
     @GetMapping("/read/{id}")
     public String getBoard(@PathVariable("id") Long id, Model model) {
         model.addAttribute("board", boardMapper.findById(id));
+
+        // insert member`s log
+        SecurityUtil.setMemberLogComment("[READ BOARD] id : " + id);
 
         return "boards/read";
     }
@@ -45,16 +54,22 @@ public class BoardController {
         return "boards/write";
     }
 
+    @MemberLoggings(logType = MemberLogType.WRITE, useComment = true)
     @PostMapping("/write")
     public String writeBoard(Board board, RedirectAttributes rttr) {
         String message = null;
 
-        if(boardMapper.save(board) > 0) {
+        boolean result = boardMapper.save(board) > 0;
+        if(result) {
             message = "SUCCESS";
         }
-        else {
+        else{
             message = "FAIL";
         }
+
+        // insert member`s log
+        SecurityUtil.setMemberLogComment("[TRIED WRITE BOARD] result : " + message);
+
 
         rttr.addFlashAttribute("message", message);
         return "redirect:/boards/list";
@@ -66,6 +81,7 @@ public class BoardController {
         return "boards/modify";
     }
 
+    @MemberLoggings(logType = MemberLogType.MODIFY, useComment = true)
     @PostMapping("/modify")
     public String modifyBoardPOST(Board board, RedirectAttributes rttr) {
         String message = null;
@@ -77,11 +93,15 @@ public class BoardController {
             message = "FAIL";
         }
 
+        // insert member`s log
+        SecurityUtil.setMemberLogComment("[TRIED MODIFY BOARD] result : " + message);
+
         rttr.addFlashAttribute("message", message);
 
         return "redirect:/boards/list";
     }
 
+    @MemberLoggings(logType = MemberLogType.REMOVE, useComment = true)
     @GetMapping("/delete/{id}")
     public String delete(@PathVariable("id") Long id, RedirectAttributes rttr) {
         String message = null;
@@ -91,6 +111,9 @@ public class BoardController {
         else {
             message = "FAIL";
         }
+
+        // insert member`s log
+        SecurityUtil.setMemberLogComment("[TRIED REMOVE BOARD] result : " + message);
 
         rttr.addFlashAttribute("message", "message");
 

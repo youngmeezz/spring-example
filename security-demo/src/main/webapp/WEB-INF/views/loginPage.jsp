@@ -17,7 +17,7 @@
 </form>
 
 <p>
-    ${failMessage}
+    message : <strong>${failMessage}</strong>
 </p>
 
 </body>

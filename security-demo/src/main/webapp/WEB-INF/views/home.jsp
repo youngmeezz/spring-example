@@ -9,6 +9,10 @@
 	Hello world!  
 </h1>
 
-<P>  The time on the server is ${serverTime}. </P>
+<P>  The time on the server is ${serverTime}. </P> <br />
+
+<a href="/boards/list">Board list</a>
+<a href="/boards/write">Board write</a>
+
 </body>
 </html>
