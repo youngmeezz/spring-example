@@ -14,7 +14,7 @@ public interface LoginAttemptsMapper {
     @Insert("insert into login_attempts (ip, last_modified) values(#{ip}, now())")
     public int save(@Param("ip") String ip);
 
-    @Select("select * from login_attempts where ip = #{ip}")
+    @Select("select * from login_attempts where ip = #{ip} and attempts > 0")
     public LoginAttempts findByIp(@Param("ip") String ip);
 
     @Update("update login_attempts set attempts = attempts + 1, last_modified=now() where ip = #{ip}")
