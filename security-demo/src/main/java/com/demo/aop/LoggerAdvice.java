@@ -7,6 +7,7 @@ import com.demo.thread.ThreadLocalContext;
 import com.demo.thread.ThreadLocalManager;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.After;
+import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
@@ -26,15 +27,15 @@ import java.time.LocalDateTime;
 public class LoggerAdvice {
     private static final Logger logger = LoggerFactory.getLogger(LoggerAdvice.class);
 
-    @After("@annotation(MemberLoggings)")
+    @AfterReturning("@annotation(MemberLoggings)")
     public void insertMembersLog(JoinPoint jp) {
-        System.out.println("LoggerAdvice::insertMebersLog() is called");
-        boolean clearContext = false;
+        logger.debug("LoggerAdvice::insertMebersLog() is called");
 
+        boolean clearedContext = false;
         try {
             MemberLoggings loggingAnnotation = getAdminLoggings(jp);
             boolean useComment = loggingAnnotation.useComment();
-            clearContext = useComment == false;
+            clearedContext = (useComment == false);
 
             MemberLog log = getMemberLogFromMember(SecurityUtil.getMember());
             log.setType(loggingAnnotation.logType());
@@ -42,7 +43,7 @@ public class LoggerAdvice {
 
             ThreadLocalContext context = ThreadLocalManager.clearContext();
             if(useComment && context != null) {
-                clearContext = true;
+                clearedContext = true;
                 log.setComment(context.getMemberLogComment());
             }
             logger.debug("## [catch member`s action log] : {}" , log);
@@ -56,7 +57,7 @@ public class LoggerAdvice {
             logger.error("## failed to insert members log",e);
         }
         finally {
-            if(!clearContext) {
+            if(!clearedContext) {
                 ThreadLocalManager.clearContext();
             }
         }
