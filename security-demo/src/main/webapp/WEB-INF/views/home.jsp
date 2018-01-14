@@ -13,6 +13,6 @@
 
 <a href="/boards/list">Board list</a>
 <a href="/boards/write">Board write</a>
-
+zzz
 </body>
 </html>
