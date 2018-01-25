@@ -10,7 +10,7 @@ import java.io.PrintStream;
  * @Date 2018-01-14
  * @GitHub : https://github.com/zacscoding
  */
-public class CustomLogger {
+public class CustomPrinter {
     private static Gson TO_SRING_GSON;
     public static final PrintStream PS = System.out;
     static {

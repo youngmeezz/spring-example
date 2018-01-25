@@ -13,6 +13,20 @@
         <bean id="cacheManager" class="org.springframework.cache.concurrent.ConcurrentMapCacheManager" />
     </beans>
 
+    <beans profile="profile_xml_config">
+        <beans profile="profile_test1">
+            <bean id="envProfile" class="org.springdemo.domain.EnvProfile">
+                <property name="envProfile" value="profile_test1" />
+            </bean>
+        </beans>
+        <beans profile="profile_test2">
+            <bean id="envProfile2" class="org.springdemo.domain.EnvProfile">
+                <property name="envProfile" value="profile_test2" />
+            </bean>
+        </beans>
+    </beans>
+
+
     <beans>
         <context:component-scan base-package="org.springdemo.config" />
     </beans>

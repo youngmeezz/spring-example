@@ -31,7 +31,7 @@
   <context-param>
     <param-name>spring.profiles.active</param-name>
     <!-- java config : java_config // xml config : xml_config -->
-    <param-value>java_config</param-value>
+    <param-value>profile_xml_config,profile_test1</param-value>
   </context-param>
 
   <servlet-mapping>

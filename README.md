@@ -4,11 +4,26 @@
 - <a href="https://github.com/zacscoding/spring-example/tree/master/spring-default">Spring default settings </a>
 - <a href="https://github.com/zacscoding/spring-example/tree/master/security-demo">Spring security demo </a>
 - <a href="https://github.com/zacscoding/spring-example/tree/master/databind-demo">Spring data binding </a>
-- <a href="">Spring </a>  
+- <a href="">Spring Demo</a>  
 <table>
   <tr>
-    <td></td> <td></td>
+    <td>Cache</td>
+    <td>
+      <a href="https://github.com/zacscoding/spring-example/tree/master/spring-demo#cache">Go to</a>      
+    </td>     
   </tr>
+  <tr>
+    <td>Profile</td>
+    <td>
+      <a href="https://github.com/zacscoding/spring-example/tree/master/spring-demo#profile">Go to</a>      
+    </td>     
+  </tr>
+  <tr>
+    <td></td>
+    <td>
+      <a href=""></a>      
+    </td>     
+  </tr>  
 </table>
 
 ---

@@ -1,6 +1,7 @@
 ## Spring examples!!
 
 - <a href="#cache">Cache</a>
+- <a href="#profile">Profile</a>
 
 
 ---
@@ -227,3 +228,159 @@ INFO : org.springdemo.persistent.xml.PersonDao - ## [request find all by name] n
 ===================  Second Call   ===============
 ====================================================
 ```
+
+---
+
+<div id="profile"></div>
+
+## Profile  
+- org.springdemo.config.ProfileConfig  
+- org.springdemo.domain.EnvProfile
+- web.xml
+- WEB-INF/config/root-context.xml  
+- test/org.springdemo.profile.ProfileTest 
+
+> Generate Beans depend on profile  
+
+1. Java Config  
+
+```
+package org.springdemo.config;
+
+import org.springdemo.domain.EnvProfile;
+import org.springdemo.util.CustomPrinter;
+import org.springdemo.util.GsonUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
+import org.springframework.core.env.Environment;
+
+@Configuration
+@Profile("profile_java_config")
+public class ProfileConfig {
+    @Autowired
+    private Environment env;
+
+    @Bean
+    @Profile("profile_test1")
+    public EnvProfile envProfile() {
+        CustomPrinter.println("## [ProfileConfig.envProfile() is called] activated profiles : {}", GsonUtil.toString(getActivatedProfiles()));
+        EnvProfile profile = new EnvProfile();
+        profile.setEnvProfile("profile_test1");
+        return profile;
+    }
+
+    @Bean
+    @Profile("profile_test2")
+    public EnvProfile envProfile2() {
+        CustomPrinter.println("## [ProfileConfig.envProfile2() is called] activated profiles : {}", GsonUtil.toString(getActivatedProfiles()));
+        EnvProfile profile = new EnvProfile();
+        profile.setEnvProfile("profile_test2");
+        return profile;
+    }
+
+    private String[] getActivatedProfiles() {
+        // get current activated profiles
+        String[] activeProfiles = env.getActiveProfiles();
+        return (activeProfiles == null) ? new String[]{} : activeProfiles;
+    }
+}
+```
+
+
+2. XML  
+
+```
+<beans profile="profile_xml_config">
+  <beans profile="profile_test1">
+    <bean id="envProfile" class="org.springdemo.domain.EnvProfile">
+      <property name="envProfile" value="profile_test1" />
+    </bean>
+  </beans>
+  <beans profile="profile_test2">
+    <bean id="envProfile2" class="org.springdemo.domain.EnvProfile">
+      <property name="envProfile" value="profile_test2" />
+    </bean>
+  </beans>
+</beans>
+```
+
+3. Activate Profile web.xml  
+
+```
+<!-- Set default profile for context -->
+<context-param>
+  <param-name>spring.profiles.active</param-name>  
+  <param-value>profile_xml_config,profile_test1</param-value>
+</context-param>
+```
+
+4. Acivate Profile in test  
+
+```
+package org.springdemo.profile;
+
+import org.junit.Test;
+import org.springdemo.domain.EnvProfile;
+import org.springdemo.runner.AbstractTestRunner;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ActiveProfiles;
+
+@ActiveProfiles({"profile_java_config","profile_test1"})
+// @ActiveProfiles({"profile_java_config","profile_test2"})
+// @ActiveProfiles({"profile_xml_config","profile_test1"})
+//@ActiveProfiles({"profile_xml_config","profile_test2"})
+public class ProfileTest extends AbstractTestRunner {
+    @Autowired
+    EnvProfile envProfile;
+
+    @Test
+    public void profile() {
+        System.out.println("## " + envProfile);
+    }
+}
+```
+
+> Test Result  
+
+```
+## [ProfileConfig.envProfile() is called] activated profiles : ["profile_java_config","profile_test1"]
+## EnvProfile(envProfile=profile_test1)
+```
+
+5. Get activated profile
+
+```
+package org.springdemo.config;
+
+import org.springdemo.domain.EnvProfile;
+import org.springdemo.util.CustomPrinter;
+import org.springdemo.util.GsonUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
+import org.springframework.core.env.Environment;
+
+/**
+ * @author zacconding
+ * @Date 2018-01-25
+ * @GitHub : https://github.com/zacscoding
+ */
+
+@Configuration
+@Profile("profile_java_config")
+public class ProfileConfig {
+    @Autowired
+    private Environment env;    
+    ...
+    private String[] getActivatedProfiles() {
+        // get current activated profiles
+        String[] activeProfiles = env.getActiveProfiles();
+        return (activeProfiles == null) ? new String[]{} : activeProfiles;
+    }
+}
+```
+
+---
