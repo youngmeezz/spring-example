@@ -1,28 +1,29 @@
 # ch5 서비스 추상화
 
-- <a href="#5.">5.1 사용자 레벨 관리 기능 추가</a>
+- <a href="#5.1">5.1 사용자 레벨 관리 기능 추가</a>
 - <a href="#5.2">5.2 트랜잭션 서비스 추상화</a>
+
+- <a href="#5."></a>
 
 <div id="5.1">
 
 ## 5.1 사용자 레벨 관리 기능 추가
-;지금까지 구현 한 UserDao는 가장 기초적인 CRUD만 가능
+;지금까지 구현 한 UserDao는 가장 기초적인 CRUD만 가능  
+=> 간단한 비즈니스 로직 추가  
 
-사용자 관리 기능 추가
+**사용자 관리 기능 추가**  
 
 - 사용자의 레벨은 BASIC, SILVER, GOLD 세 가지 중 하나
 - 처음 가입 시 BASIC, 활동에 따라 한단계 씩 업그레이드
 - 50회 이상 로그인 하면 BASIC -> SILVER
-- SILVER이면서 30번 이상 춫너 받으면 GOLD가 됨
-- 사용자 레벨의 변경 작업은 일정한 주기를 가지고 일괄적으로 진행. 변경 작업 전에는 <br>
+- SILVER이면서 30번 이상 추천을 받으면 GOLD가 됨
+- 사용자 레벨의 변경 작업은 일정한 주기를 가지고 일괄적으로 진행. 변경 작업 전에는  
   조건을 충족하더라도 레벨의 변경이 일어나지 X
 
 
 ### 5.1.1 필드 추가
 
 **Level 이늄**
-
----
 
 > 정수형 상수 값으로 정의한 사용자 레벨
 
@@ -237,8 +238,7 @@ public class UserDaoJdbc implements UserDao {
 	}
 </pre>
 
----
-
+---  
 
 
 **수정 테스트 보완**
@@ -343,15 +343,12 @@ public class UserServiceTest {
 
 -> 빈 테스트 후 별 의미 없으니, 삭제해도 좋음
 
----
 
-**upgradeLevels() 메소드**
-
----
+**upgradeLevels() 메소드**  
 
 > 사용자 레벨 업그레이드 메소드
 
-<pre>
+```
 public void upgradeLevels() {
 	List<User> users = userDao.getAll();
 	for(User user : users) {
@@ -377,7 +374,7 @@ public void upgradeLevels() {
 		}
 	}		
 }
-</pre>
+```  
 
 -> 간단해 보이는 코드이지만, 정말 뛰어난 개발자는 아무리 간단해 보여도 실수할 수 있음을 알고
 
@@ -415,8 +412,9 @@ public class UserServiceTest {
 
 -> 기준값의 전후로 선택하는 것이 좋음. 50,30 -> 50,29
 
-> 사용자 레벨 업그레이드 테스트
-<pre>
+> 사용자 레벨 업그레이드 테스트  
+
+```
 	@Test
 	public void upgradeLevels() {
 		userDao.deleteAll();
@@ -442,10 +440,7 @@ public class UserServiceTest {
 		User userUpdate = userDao.get(user.getId());
 		assertThat(userUpdate.getLevel(), is(expectedLevel));
 	}
-</pre>
-
----
-
+```
 
 ### 5.1.4 UserService.add()
 ; 처음 가입시 BASIC 레벨을 갖도록 하는 로직 어디에 ?
@@ -456,41 +451,38 @@ public class UserServiceTest {
 
 -> UserService에 넣기 (레벨이 미리 정해 진 경우 / 레벨이 비어 있는 경우)
 
----
 
 > add() 메소드의 테스트
 
-<pre>
-	@Test
-	public void add() {
-		userDao.deleteAll();		
+```
+@Test
+public void add() {
+	userDao.deleteAll();		
+	// GOLD 레벨
+	User userWithLevel = users.get(4);
 
-		// GOLD 레벨
-		User userWithLevel = users.get(4);
-		// LEVEL이 없는 경우 BASIC이 되어야 함
-		User userWithoutLevel = users.get(0);
-		userWithoutLevel.setLevel(null);
+  // LEVEL이 없는 경우 BASIC이 되어야 함
+	User userWithoutLevel = users.get(0);
+	userWithoutLevel.setLevel(null);
+	userService.add(userWithLevel);  
+	userService.add(userWithoutLevel);
 
-		userService.add(userWithLevel);
-		userService.add(userWithoutLevel);
-
-		User userWithLevelRead = userDao.get(userWithLevel.getId());
-		User userWithoutLevelRead = userDao.get(userWithoutLevel.getId());
-
-		assertThat(userWithLevelRead.getLevel(), is(userWithLevel.getLevel()));
-		assertThat(userWithoutLevelRead.getLevel(), is(Level.BASIC));		
+	User userWithLevelRead = userDao.get(userWithLevel.getId());
+	User userWithoutLevelRead = userDao.get(userWithoutLevel.getId());
+	assertThat(userWithLevelRead.getLevel(), is(userWithLevel.getLevel()));
+	assertThat(userWithoutLevelRead.getLevel(), is(Level.BASIC));		
 	}
-</pre>
+```  
 
 > 사용자 신규 등록 로직을 담은 add() 메소드
 
-<pre>
+```
 	public void add(User user) {
 		if(user.getLevel() == null)
 			user.setLevel(Level.BASIC);
 		userDao.add(user);
 	}
-</pre>
+```  
 
 -> 테스트가 조금 복잡한 것이 흠. 뒤에서 다시 깔끔히 만들기 위해 다룸.
 
@@ -508,43 +500,38 @@ public class UserServiceTest {
 
 **upgradeLevels() 메소드 코드의 문제점**
 
-- (1) user.getLevel() == Level.BASIC
-- (2) user.getLogin() >=50
-- (3) user.setLevel(Level.SILVER)
-- (4) changed = Boolean.TRUE;
+- (1) user.getLevel() == Level.BASIC  
+=> 현재 레벨이 무엇인지 파악하는 로직
+- (2) user.getLogin() >=50  
+=> 업그레이드 조건을 담은 로직
+- (3) user.setLevel(Level.SILVER)  
+=> 다음 단계의 레벨이 무엇이며 업그레이드 하기 위한 작업은 어떤것인지
+- (4) changed = Boolean.TRUE;  
+=> 자체로 의미 X, (5)의 작업이 필요한 지 여부
 - (5) if( changed ) { userDao.update(user); }
 
-(1) 현재 레벨이 무엇인지 파악하는 로직 <br>
-(2) 업그레이드 조건을 담은 로직 <br>
-(3) 다음 단계의 레벨이 무엇이며 업그레이드 하기 위한 작업은 어떤것인지<br>
-(4) 자체로 의미 X, (5)의 작업이 필요한 지 여부<br>
 
+**upgradeLevels() 리팩토링**  
 
-**upgradeLevels() 리팩토링**
+> 기본 작업 흐름만 남겨둔 upgradeLevels()  
 
+```
+public void upgradeLevels() {
+  List<User> users = userDao.getAll();
+  for(User user : users) {
+    if(canUpgradeLevel(user)) {
+      upgradeLevel(user);
+    }
+  }		
+}
+```  
 
----
-
-> 기본 작업 흐름만 남겨둔 upgradeLevels()
-
-<pre>
-	public void upgradeLevels() {
-		List<User> users = userDao.getAll();
-		for(User user : users) {
-			if( canUpgradeLevel(user) ) {
-				upgradeLevel(user);
-			}
-		}		
-	}
-</pre>
-
--> 모든 사용자 정보를 가져와 한 명씩 업그레이드가 가능한지 확인하고,
-
+-> 모든 사용자 정보를 가져와 한 명씩 업그레이드가 가능한지 확인하고,  
 가능 하면 업그레이드를 함. -> 쉽게 이해가 됨
 
 > 업그레이드 가능 확인 메소드
 
-<pre>
+```
 private boolean canUpgradeLevel(User user) {
 	Level currentLevel = user.getLevel();
 	switch(currentLevel) {
@@ -555,15 +542,14 @@ private boolean canUpgradeLevel(User user) {
 			throw new IllegalArgumentException("Unknown Level : " + currentLevel);
 	}		
 }
-</pre>
+```  
 
--> default 에서 현재 로직에서 다룰 수 없는 레벨이 주어지면, 예외 발생
-
--> 레벨이 추가되고, 로직을 수정하지 않으면 에러가 나서 확인할 수 있음.
+=> default 에서 현재 로직에서 다룰 수 없는 레벨이 주어지면, 예외 발생  
+=> 레벨이 추가되고, 로직을 수정하지 않으면 에러가 나서 확인할 수 있음.
 
 > 레벨 업그레이드 작업 메소드
 
-<pre>
+```
 private void upgradeLevel(User user) {
 	if(user.getLevel() == Level.BASIC)
 		user.setLevel(Level.SILVER);
@@ -571,19 +557,14 @@ private void upgradeLevel(User user) {
 		user.setLevel(Level.GOLD);
 	userDao.update(user);
 }
-</pre>
+```
 
--> upgradeLevel()은 GOLD에 대한 예외처리도 없고 레벨이 늘어나면, if문이 점점 늘어남.
-
----
-
-=> 레벨의 순서와 다음 단계 레벨이 무엇인지를 결정하는 일은 Level에게 맡기기!
-
----
+=> upgradeLevel()은 GOLD에 대한 예외처리도 없고 레벨이 늘어나면, if문이 점점 늘어남.  
+=> 레벨의 순서와 다음 단계 레벨이 무엇인지를 결정하는 일은 Level에게 맡기기!  
 
 > 업그레이드 순서를 담고 있도록 수정한 Level
 
-<pre>
+```
 public enum Level {
 	// 이늄 선언에 DB에 저장할 값과 함께
 	// 다음 단계의 레벨 정보도 추가
@@ -616,7 +597,7 @@ public enum Level {
 		}
 	}
 }
-</pre>
+```
 
 -> 레벨의 업그레이드 순서는 Level 이늄 안에서 관리할 수 있음.
 
@@ -634,28 +615,25 @@ public void upgradeLevel() {
 
 -> User의 upgradeLevel()은 UserService이외에 사용가능하므로, 스스로 예외상황에 대한 검증 기능을 갖음으로써
 
-User 오브젝트를 잘못 사용하는 코드가 있다면 확인해줄 수 있음.
+User 오브젝트를 잘못 사용하는 코드가 있다면 확인해줄 수 있음.  
 
 > 간결해진 upgradeLevel()
 
-<pre>
+```
 private void upgradeLevel(User user) {
 	user.upgradeLevel();
 	userDao.update(user);
 }
-</pre>
+```
 
--> if 분기가 많은 것보다 훨씬 깔끔해지고, 각 오브젝트가 해야 할 책임도 깔끔히 분리 됨.
+=> if 분기가 많은 것보다 훨씬 깔끔해지고, 각 오브젝트가 해야 할 책임도 깔끔히 분리 됨.  
 
----
 
 **User 테스트**
 
----
-
 > User 테스트
 
-<pre>
+```
 package springbook.user.service;
 ...
 public class UserTest {
@@ -689,8 +667,7 @@ public class UserTest {
 		}
 	}
 }
-
-</pre>x
+```
 
 
 

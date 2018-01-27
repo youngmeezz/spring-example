@@ -5,7 +5,8 @@ public enum Level {
 	
 	private final int value;
 	private final Level next;
-	
+
+	//DB에 저장할 값을 넣어줄 생성자를 만들어 둠
 	Level(int value,Level next) {
 		this.value = value;
 		this.next = next;
