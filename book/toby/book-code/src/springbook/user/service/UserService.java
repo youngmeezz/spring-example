@@ -4,6 +4,9 @@ import java.sql.Connection;
 import java.util.List;
 import javax.sql.DataSource;
 import org.springframework.jdbc.datasource.DataSourceUtils;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 import springbook.user.dao.UserDao;
 import springbook.user.domain.Level;
@@ -18,6 +21,11 @@ public class UserService {
     private UserDao userDao;
     private UserLevelUpgradePolicy upgradePolicy;
     private DataSource dataSource;
+    private PlatformTransactionManager transactionManager;
+
+    public void setTransactionManager(PlatformTransactionManager transactionManager) {
+        this.transactionManager = transactionManager;
+    }
 
     public void setUserDao(UserDao userDao) {
         this.userDao = userDao;
@@ -38,7 +46,25 @@ public class UserService {
         userDao.add(user);
     }
 
+    // 스프링의 트랜잭션 추상화 API를 적용
     public void upgradeLevels() throws Exception {
+        // JDBC 트랜잭션 추상 오브젝트 생성
+        TransactionStatus status = transactionManager.getTransaction(new DefaultTransactionDefinition());
+        try {
+            List<User> users = userDao.getAll();
+            for (User user : users) {
+                if (canUpgradeLevel(user)) {
+                    upgradeLevel(user);
+                }
+            }
+            this.transactionManager.commit(status);
+        } catch (Exception e) {
+            this.transactionManager.rollback(status);
+            throw e;
+        }
+    }
+
+    public void upgradeLevels2() throws Exception {
         // 트랜잭션 동기화 관리자를 이용해 동기화 작업
         // private static final ThreadLocal<Set<TransactionSynchronization>> synchronizations = new NamedThreadLocal("Transaction synchronizations"); 에 저장
         TransactionSynchronizationManager.initSynchronization();
@@ -48,19 +74,19 @@ public class UserService {
 
         try {
             List<User> users = userDao.getAll();
-            for(User user : users) {
-                if(canUpgradeLevel(user)) {
+            for (User user : users) {
+                if (canUpgradeLevel(user)) {
                     upgradeLevel(user);
                 }
             }
             // 정상 작업 마치면 트랜잭션 커밋
             conn.commit();
-        } catch(Exception e) {
+        } catch (Exception e) {
             conn.rollback();
             throw e;
         } finally {
             // 스프링 유틸 메소드를 이용해 DB 커넥션을 안전하게 닫음
-            DataSourceUtils.releaseConnection(conn,dataSource);
+            DataSourceUtils.releaseConnection(conn, dataSource);
             // 동기화 작업 종료 및 정리
             TransactionSynchronizationManager.unbindResource(this.dataSource);
             TransactionSynchronizationManager.clearSynchronization();

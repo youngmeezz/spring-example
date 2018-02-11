@@ -2,6 +2,9 @@
 
 - <a href="#5.1">5.1 사용자 레벨 관리 기능 추가</a>
 - <a href="#5.2">5.2 트랜잭션 서비스 추상화</a>
+- <a href="#5.3">5.3 서비스 추상화와 단일 책임 원칙</a>
+- <a href="#5.4">5.4 메일 서비스 추상화</a>
+
 
 - <a href="#5."></a>
 
@@ -787,4 +790,458 @@ public class UserLevelUpgradePolicyImpl implements UserLevelUpgradePolicy {
 
 ---
 
-<div id="5.2"></div>
+<div id="5.2"></div>  
+
+## 5.2 트랜잭션 서비스 추상화  
+
+- <a href="#5.2.1">5.2.1 모 아니면 도 </a>
+- <a href="#5.2.2">5.2.2 트랜잭션 경계설정</a>
+- <a href="#5.2.3">5.2.3 트랜잭션 동기화</a>
+- <a href="#5.2.4">5.2.4 트랜잭션 서비스 추상화</a>
+- <a href="#5.2.4"></a>
+
+```
+정기 사용자 레벨 관리 작업을 수행하는 도중에 네트워크가 끊기거나 서버에 장애가 있는 경우
+작업을 완료할 수 없다면,
+1) 그때까지 변경된 사용자의 레벨은 그대로 둘 것 인가?
+2) 모두 초기 상태로 되돌려 놓아야 할 것인가?  
+```
+
+<div id="5.2.1"></div>
+
+### 모 아니면 도  
+; 모든 사용자에 대해 업그레이드 작업을 진행하다가, 중간에 예외를 발생  
+
+** 테스트용 UserService 대역 **  
+(테스트를 위해 기존 코드를 수정하는 것이아니라, UserService의 대역을 만듬)  
+=> UserService를 상속 & 테스트 할 코드를 오버라이딩  
+
+> TestUserService static class
+
+```
+package springbook.user.service;
+
+public class UserService {
+	...
+  // private => protected 임시 변환
+	protected void upgradeLevel(User user) {
+		user.upgradeLevel();
+		userDao.update(user);
+	}
+
+  static class TestUserService extends UserService {
+      private String id;
+
+      private TestUserService(String id) {
+          this.id = id;
+      }
+
+      @Override
+      public void upgradeLevel(User user) {
+          if (user.getId().equals(this.id)) {
+              throw new TestUserServiceException();
+          }
+          super.upgradeLevel(user);
+      }
+  }
+
+  static class TestUserServiceException extends RuntimeException {
+
+  }
+}
+```
+
+> UserServiceTest
+
+```
+@Test
+public void upgradeAllOrNothing() {
+    // 예외를 발생 시킬 ID
+    UserService testUserService = new TestUserService(users.get(3).getId());
+    // UserDao setting
+    testUserService.setUserDao(this.userDao);
+
+    // given
+    userDao.deleteAll();
+    for (User user : users) {
+        userDao.add(user);
+    }
+
+    try {
+        testUserService.upgradeLevels();
+        // 아래 코드가 실행되면 fail
+        fail("TestUserServiceException expected");
+    } catch (TestUserServiceException e) {
+
+    }
+    checkLevelUpgraded(users.get(1), false);
+}
+```
+
+
+**테스트 실패 원인**  
+=> 트랜잭션 문제!!
+
+<div id="5.2.2"></div>
+
+### 5.2.2 트랜잭션 경계설정  
+
+트랜잭션 롤백(transaction rollback)과 트랜잭션 커밋(transaction commit)  
+
+**JDBC 트랜잭션의 트랜잭션 경계설정**  
+
+
+```
+Connection conn = dataSource.getConnection();
+
+// 트랜잭션 시작
+conn.setAutoCommit(false);
+try {
+  // pstmt, pstmt2 하나의 트랜잭션으로 묶인 단위 작업
+  PreparedStatement pstmt = conn.preparedStatement(sql);
+  pstmt.executeUpdate();
+
+  PreparedStatement pstmt2 = conn.preparedStatement(sql2);
+  pstmt2.executeUpdate();
+
+  // 트랜잭션 커밋
+  conn.commit();
+}
+catch(Exception e) {
+  // 트랜잭션 롤백
+  conn.rollback();
+}
+
+conn.close();
+```
+
+- 트랜잭션 경계설정(transaction demarcation)  
+; 트랜잭션이 존재하는 범위(트랜잭션의 시작과 끝)를 지정하는 것  
+- 로컬 트랜잭션(local transaction)  
+; 하나의 DB 커넥션 안에서 만들어지는 트랜잭션  
+
+**UserService와 UserDao 트랜잭션 문제**  
+
+> UserService와 UserDao의 트랜잭션 처리 과정  
+
+![트랜잭션 처리 과정](./pics/[pic5-2]UserService와UserDao_트랜잭션.png)
+
+=> 데이터 엑세스 코드를 Dao로 만들어 분리해놌을 경우, DAO 메소드를 호출할 때 마다  
+하나의 새로운 트랜잭션이 만들어지는 구조가 될 수 밖에 없음  
+
+**비즈니스 로직 내의 트랜잭션 경계 설정**  
+Sol1) DAO 메소드 안에 upgradeLevels() 메소드 내용을 옮기기  
+=> 비즈니스 로직과 데이터 로직을 한데 묶어버리는 결과 초래  
+Sol2) UserService에 트랜잭션 경계 설정  
+```
+public void upgradeLevels() throws Exception {
+  (1) DB Connection 생성
+  (2) 트랜잭션 시작
+  try {
+    (3) DAO 메소드 호출
+    (4) 트랜잭션 커밋
+  }
+  catch(Exception e) {
+    (5) 트랜잭션 롤백
+    throw e;
+  }
+  finally {
+    (6) DB Connection 종료
+  }
+}
+```
+
+> Connection 오브젝트를 파라미터로 전달받는 UserDao 메소드  
+
+```
+public interface UserDao {
+  public void add(Connection conn, User user);
+  public void get(Connection conn, String id);
+  ...
+  public void update(Connection conn, User user1);
+}
+```
+
+> Connection을 공유하도록 수정한 UserService 메소드  
+
+![Connection을 공유하도록 수정한 UserService메소드](./pics/[pic5-3]Connection공유_UserService메소드.png)
+
+**UserService 트랜잭션 경계설정의 문제점**  
+
+- DB 커넥션을 비롯한 리소스의 깔끔한 처리를 가능하게 했던 JdbcTemplate을 더이상 활용X
+- DAO의 메소드와 비즈니스 로직을 담고 있는 UserService의 메소드에 Connection 파라미터가 추가되어야 함
+- Connection 파라미터가 UserDao 인터페이스에 추가되면, UserDao 인터페이스는 데이터 엑세스 기술에 독립적 X
+- 지금까지 작성한 테스트 코드 모두 변경  
+
+<div id="5.2.3"></div>
+
+### 5.2.3 트랜잭션 동기화
+; 스프링의 독립적인 트랜잭션 동기화(transaction synchronization)방식
+
+**Connection 파라미터 제거**  
+
+> 트랜잭션 동기화를 사용한 경우의 작업 흐름  
+
+![트랜잭션 동기화를 사용한 경우의 작업 흐름](./pics/[pic5-4]트랜잭션동기화_작업흐름.png)
+
+(1) UserService에서 Connection 생성  
+(2) 트랜잭션 동기화 저장소에 저장  
+setAutoCommit(false);로 트랜잭션을 시작  
+(3) 첫 update() 메소드 호출  
+(4) 트랜잭션 동기화 저장소에 현재 시작된 트랜잭션을 가진 Connection 오브젝트가 존재하는지 확인  
+(5) 가져온 Connection을 이용해 PreparedStatement를 생성하여 SQL 실행 & Connection 오픈상태유지  
+(6)~(11) 까지 반복  
+(12) 트랜잭션 내 작업 성공/실패 여부에 따라 Connection의 commit() or rollback()  
+(13) 트랜잭션 저장소가 더 이상 Connection 오브젝트를 사용하지 않도록 이를 제거  
+
+**트랜잭션 동기화 적용**  
+
+> 동기화를 적용한 UserService  
+
+```
+...
+import java.sql.Connection;
+import javax.sql.DataSource;
+import org.springframework.jdbc.datasource.DataSourceUtils;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
+...
+
+public class UserService {
+    ...
+    private DataSource dataSource;
+
+    public void setDataSource(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
+
+    ...
+
+    public void upgradeLevels() throws Exception {
+        // 트랜잭션 동기화 관리자를 이용해 동기화 작업                
+        TransactionSynchronizationManager.initSynchronization();
+        // DB 커넥션 생성 + 동기화
+        Connection conn = DataSourceUtils.getConnection(dataSource);
+        conn.setAutoCommit(false);
+
+        try {
+            List<User> users = userDao.getAll();
+            for(User user : users) {
+                if(canUpgradeLevel(user)) {
+                    upgradeLevel(user);
+                }
+            }
+            // 정상 작업 마치면 트랜잭션 커밋
+            conn.commit();
+        } catch(Exception e) {
+            conn.rollback();
+            throw e;
+        } finally {
+            // 스프링 유틸 메소드를 이용해 DB 커넥션을 안전하게 닫음
+            DataSourceUtils.releaseConnection(conn,dataSource);
+            // 동기화 작업 종료 및 정리
+            TransactionSynchronizationManager.unbindResource(this.dataSource);
+            TransactionSynchronizationManager.clearSynchronization();
+        }
+    }
+
+    ...
+}
+```  
+
+=> TransactionSynchronizationManager.initSynchronization(); 를 호출하면  
+private static final ThreadLocal<Set<TransactionSynchronization>> synchronizations   
+= new NamedThreadLocal("Transaction synchronizations"); 에 저장  
+=> JdbcTemplate의 경우 Connection con = DataSourceUtils.getConnection(this.getDataSource());  
+를 이용하여 Connection을 가져옴  
+
+
+**트랜잭션 테스트 보완**  
+
+```
+@Test
+public void upgradeAllOrNothing() throws Exception {
+  ...
+  // DataSource setting
+  testUserService.setDataSource(dataSource);
+  ...
+}
+```
+
+**JdbcTemplate과 트랜잭션 동기화**  
+
+JdbcTemplate은 Connection을 생성할 때 트랜잭션 동기화 저장소에 등록 된 DB 커넥션  
+여부에 따라 적절히 생성 or 사용  
+
+
+---
+
+<div id="5.2.4"></div>  
+
+### 5.2.4 트랜잭션 서비스 추상화  
+
+**기술과 환경에 종속되는 트랜잭션 경계설정 코드**  
+문제점 : 기존 로컬 트랜잭션 처리 코드는 하나의 DB Connection에 종속적  
+=> 글로벌 트랜잭션(global transaction) 방식을 사용해야 함  
+
+![JTA를 통한 글로벌/분산 트랜잭션 관리](./pics/[pic5-5]JTA를통한글로벌_분산트랜잭션관리.png)  
+
+=> 11장에서 다룸  
+
+> JTA를 이용한 트랜잭션 코드 구조  
+```
+InitialContext ctx = new InitialContext();
+UserTransaction tx = (UserTransaction)ctx.lookup(USER_TX_JNDI_NAME);
+tx.begin();
+// JNDI로 가져온 dataSource를 사용해야 한다.
+Connection c = dataSource.getConnection();
+try {
+	// 데이터 엑세스 코드
+	tx.commit();
+} catch(Exception e) {
+	tx.rollback();
+	throw e;
+} finally {
+	c.close();
+}
+```  
+
+=> 로컬 트랜잭션과 글로벌 트랜잭션을 요구하는 사항에 따라 UserService는 자신의 로직이 바뀌지 않았음에도  
+기술환경에 따라서 코드가 바뀌는 코드가 되어버림  
+=> 또한, 하이버네이트를 이용해 UserDao를 직접 구현 한 경우, 트랜잭션 관리 코드에 문제가 발생  
+(하이버네이트는 Connection을 직접 사용하지 않고, Session이라는 것을 사용하고 독자적인 트랜잭션  
+관리 API를 사용)  
+
+**트랜잭션 API의 의존관계 문제와 해결책**  
+; UserService에서 JDBC에 종속적인 Connection을 이용 한 트랜잭션 코드가 등장하면서,  
+UserService는 UserDaoJdbc에 간접적으로 의존하는 코드가 되어버림  
+=> UserService가 특정 트랜잭션 방법에 의존적이지 않고, 독립적으로 만드는 게 목표  
+=> 추상화(하위 시스템의 공통점을 뽑아내 분리하는 것)를 적용  
+
+**스프링의 트랜잭션 서비스 추상화**  
+
+![스프링의 트랜잭션 추상화계층](./pics/[pic5-6]스프링의_트랜잭션_추상화_계층.png)  
+
+> 스프링의 트랜잭션 추상화 API를 적용한 upgradeLevels()  
+
+```
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+
+...
+// 스프링의 트랜잭션 추상화 API를 적용
+public void upgradeLevels() throws Exception {
+		// JDBC 트랜잭션 추상 오브젝트 생성
+		PlatformTransactionManager transactionManager = new DataSourceTransactionManager(dataSource);
+		TransactionStatus status = transactionManager.getTransaction(new DefaultTransactionDefinition());
+
+		try {
+				List<User> users = userDao.getAll();
+				for (User user : users) {
+						if (canUpgradeLevel(user)) {
+								upgradeLevel(user);
+						}
+				}
+				transactionManager.commit(status);
+		} catch (Exception e) {
+				transactionManager.rollback(status);
+				throw e;
+		}
+}
+```
+
+**트랜잭션 기술 설정의 분리**  
+; 트랜잭션 추상화 API를 적용한 UserService는 기술 환경에따라  
+JTATransactionManager,HibernateTransactionManager, JPATransactionManager를 이용하면 됨  
+```
+PlatformTransactionManager transactionManager = new JTATransactionManager();
+```  
+=> BUT UserService는 어떤 트랜잭션 매니저 구현체를 쓸 것인지 아는것이 DI에 위배  
+=> 구현체를 스프링 빈으로 등록(스레드 세이프 한지 항상 체크해야 됨)  
+
+=> PlatformTransactionManager는 JTA의 TransactionManager와 혼동을 피하기위해 앞에 추가 된 이름  
+
+> UserService.java  
+
+```
+private PlatformTransactionManager transactionManager;
+
+public void setTransactionManager(PlatformTransactionManager transactionManager) {
+	this.transactionManager = transactionManager;
+}
+...
+
+// 스프링의 트랜잭션 추상화 API를 적용
+public void upgradeLevels() throws Exception {
+		// JDBC 트랜잭션 추상 오브젝트 생성
+		TransactionStatus status = transactionManager.getTransaction(new DefaultTransactionDefinition());
+		try {
+				List<User> users = userDao.getAll();
+				for (User user : users) {
+						if (canUpgradeLevel(user)) {
+								upgradeLevel(user);
+						}
+				}
+				this.transactionManager.commit(status);
+		} catch (Exception e) {
+				this.transactionManager.rollback(status);
+				throw e;
+		}
+}
+
+...
+```  
+
+> applicationContext.xml  
+
+```  
+<bean id="userService" class="springbook.user.service.UserService">
+		<property name="userDao" ref="userDao"/>		
+		<property name="transactionManager" ref="transactionManager"/>
+</bean>
+
+<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"/>
+</bean>
+```
+
+---
+
+<div id="5.3"></div>
+
+# ch5.3 서비스 추상화와 단일 책임 원칙  
+
+![계층과 책임의 분리](./pics/[pic5-7]계층과_책임의_분리.png)  
+
+
+- UserDao는 데이터를 어떻게 가져오고 등록할 것인가에 대한 데이터 엑세스 로직  
+- UserService는 순수하게 사용자 관리의 업무의 비즈니스 로직을 담고 있음  
+=> 인터페이스와 DI를 통해 연결됨으로써 결합도가 낮아짐  
+- UserDao는 DB 연결을 생성하는 방법에 대해 독립적  
+(DataSource 인터페이스와ㅕ DI를 통해 추상화된 방식으로 로우레벨의 DB 연결 기술을 사용하기때문)  
+- UserService는 트랜잭션 기술과도 스프링이 제공하는 PlatformTransactionManager 인터페이스를  
+통한 추상화 계층을 사이에 두고 사용했기 때문에, 트랜잭션 기술에 독립적인 코드  
+
+=> 애플리케이션 로직의 종류에 따른 수평적인 구분 or 로직과 기술이라는 수직적인 구분이든  
+모두 결합도가 낮으며 서로 영향을 주지 않고 자유롭게 확장할 수 있는 구조를 만드는데는  
+스프링의 DI가 중요한 역할을 하고있음.  
+=> DI의 가치는 이렇게 관심, 책임, 성격이 다른 코드를 깔끔하게 분리하는 데 있음  
+
+**단일 책임 원칙(Single Responsibility Principle)**  
+; 하나의 모듈은 한 가지 책임을 가져야 한다는 의미  
+
+> 기존 JDBC Connection을 이용하여 트랜잭션 코드가 들어있는 UserService  
+
+=> 1)어떻게 사용자 레벨을 관리할 것인가 2)어떻게 트랜잭션을 관리할 것인가  
+에 대한 2가지 책임을 갖고 있었음  
+=> UserService가 수정해야 되는 이유가 2가지라는 뜻  
+=> 트랜잭션 서비스의 추상화 방식을 도입하고, 이를 DI를 통해 외부에서  
+제어하도록 만들고 나서는 한가지 책임을 가지게 됨  
+
+**단일 책임 원칙의 장점**  
+
+=> 어떤 변경이 필요할 때 수정 대상이 명확해 짐  
+
+---
+
+<div id="5.4"></div>
