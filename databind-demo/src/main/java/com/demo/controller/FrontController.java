@@ -7,8 +7,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 /**
  * @author zacconding
- * @Date 2018-01-08
- * @GitHub : https://github.com/zacscoding
  */
 @Controller
 public class FrontController {
@@ -24,6 +22,8 @@ public class FrontController {
         Person p = new Person();
         p.setAge(10);
         p.setName(";\\");
+        p.setJob("\tjsob");
+
         model.addAttribute("person", p);
 
         return "home";

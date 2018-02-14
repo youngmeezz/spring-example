@@ -1,5 +1,6 @@
 package org.springdemo.config;
 
+
 import net.sf.ehcache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.ehcache.EhCacheCacheManager;
@@ -20,9 +21,11 @@ import org.springframework.core.io.ClassPathResource;
 public class CacheConfig {
     /* ================
 	 * 1) Simple Cache Manager
+	 * ==> uses a java.util.concurrent.ConcurrentHashMap as its cache store
+	 * ==>
 	 ================== */
 
-    // Declare a cache manager
+//    // Declare a cache manager
 //	@Bean
 //	public CacheManager cacheManager() {
 //		//  java.util.concurrent.ConcurrentHashMap 를 캐시 저장소로 사용

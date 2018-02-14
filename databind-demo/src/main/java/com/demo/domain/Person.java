@@ -9,7 +9,6 @@ import java.util.List;
 
 /**
  * @author zaccoding github : https://github.com/zacscoding
- * @Date : 2018-01-22
  */
 @Getter
 @Setter
@@ -23,6 +22,7 @@ public class Person {
     private List<Integer> intList;
     private Address address;
     private List<Hobby> hobbies;
+    private String job;
 
     public String getJsonValue() {
         return new Gson().toJson(this);
@@ -30,5 +30,9 @@ public class Person {
 
     public String getJsonValue2() {
         return new Gson().toJson(this).replace("\\\\", "\\\\\\\\");
+    }
+
+    public String getJsonValue3() {
+        return new Gson().toJson(this).replaceAll("\\\\", "\\\\\\\\");
     }
 }

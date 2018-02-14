@@ -16,8 +16,8 @@ import javax.sql.DataSource;
  * @Date 2018-01-25
  * @GitHub : https://github.com/zacscoding
  */
-//@ActiveProfiles("ehcache_java_config")
-@ActiveProfiles("ehcache_xml_config")
+@ActiveProfiles("ehcache_java_config")
+//@ActiveProfiles("ehcache_xml_config")
 public class PersonDAOTest extends AbstractTestRunner {
     Person p1,p2,p3;
     @Autowired
