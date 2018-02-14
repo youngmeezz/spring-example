@@ -1,33 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:context="http://www.springframework.org/schema/context"
-       xmlns:cache="http://www.springframework.org/schema/cache"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:cache="http://www.springframework.org/schema/cache"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
         http://www.springframework.org/schema/cache
         http://www.springframework.org/schema/cache/spring-cache.xsd">
 
     <beans profile="ehcache_xml_config">
-        <cache:annotation-driven />
-        <bean id="cacheManager" class="org.springframework.cache.concurrent.ConcurrentMapCacheManager" />
+        <cache:annotation-driven/>
+        <bean id="cacheManager" class="org.springframework.cache.concurrent.ConcurrentMapCacheManager"/>
     </beans>
 
     <beans profile="profile_xml_config">
         <beans profile="profile_test1">
             <bean id="envProfile" class="org.springdemo.domain.EnvProfile">
-                <property name="envProfile" value="profile_test1" />
+                <property name="envProfile" value="profile_test1"/>
             </bean>
         </beans>
         <beans profile="profile_test2">
             <bean id="envProfile2" class="org.springdemo.domain.EnvProfile">
-                <property name="envProfile" value="profile_test2" />
+                <property name="envProfile" value="profile_test2"/>
             </bean>
         </beans>
     </beans>
 
+    <beans profile="async_xml_config">
+        <bean id=""></bean>
+    </beans>
 
     <beans>
-        <context:component-scan base-package="org.springdemo.config" />
+        <context:component-scan base-package="org.springdemo.config"/>
     </beans>
 </beans>

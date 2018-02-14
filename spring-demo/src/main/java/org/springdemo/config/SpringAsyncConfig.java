@@ -11,18 +11,18 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 /**
  * Spring Async Config
  *
- * @author zaccoding
- * github : https://github.com/zacscoding
+ * @author zaccoding github : https://github.com/zacscoding
  */
 @Configuration
 @EnableAsync
 @ComponentScan(basePackages = "org.springdemo.async")
 public class SpringAsyncConfig {
 
-    @Bean
-    @Qualifier("asyncThreadPoolTaskExecutor")
+    @Bean("asyncThreadPoolTaskExecutor")
     public Executor asyncThreadPoolTaskExecutor() {
         ThreadPoolTaskExecutor pool = new ThreadPoolTaskExecutor();
+        // settings pool
+
         return pool;
     }
 }

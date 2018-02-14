@@ -2,6 +2,7 @@
 
 - <a href="#cache">Cache</a>
 - <a href="#profile">Profile</a>
+- <a href="#async">Async</a>
 
 
 ---
@@ -238,7 +239,7 @@ INFO : org.springdemo.persistent.xml.PersonDao - ## [request find all by name] n
 - org.springdemo.domain.EnvProfile
 - web.xml
 - WEB-INF/config/root-context.xml  
-- test/org.springdemo.profile.ProfileTest 
+- test/org.springdemo.profile.ProfileTest
 
 > Generate Beans depend on profile  
 
@@ -382,5 +383,385 @@ public class ProfileConfig {
     }
 }
 ```
+
+---
+
+<div id="async"></div>
+
+## Spring Async
+
+1. Settings  
+2. Default test  
+3. Simple sample  
+User ---> Server : request github look up
+User <--- Server : response "Success request"
+User <--- Server : response Result of github user  
+user <--- Server : response "Complete request"
+
+#### ref  
+
+- http://javacan.tistory.com/entry/Servlet-3-Async  
+- http://www.baeldung.com/spring-async
+- https://spring.io/guides/gs/async-method/
+
+
+
+***1. Settings***
+
+> Java Config  
+org.springdemo.config.SpringAsyncConfig
+
+```
+package org.springdemo.config;
+
+import java.util.concurrent.Executor;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+
+/**
+ * Spring Async Config
+ *
+ * @author zaccoding github : https://github.com/zacscoding
+ */
+@Configuration
+@EnableAsync
+@ComponentScan(basePackages = "org.springdemo.async")
+public class SpringAsyncConfig {
+
+    @Bean
+    @Qualifier("asyncThreadPoolTaskExecutor")
+    public Executor asyncThreadPoolTaskExecutor() {
+        ThreadPoolTaskExecutor pool = new ThreadPoolTaskExecutor();
+        // settings pool
+
+        return pool;
+    }
+}
+```
+
+***2. Default Test***  
+
+> org.springdemo.async.MessageSender
+
+```
+package org.springdemo.async;
+
+import java.io.IOException;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
+import javax.servlet.AsyncContext;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
+import org.springdemo.util.ServletUtil;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.AsyncResult;
+import org.springframework.stereotype.Component;
+
+@Slf4j
+@Component
+public class MessageSender {
+
+    @Async("asyncThreadPoolTaskExecutor")
+    public Future<String> send(String message) {
+        log.info("[## MessageSender:send()] message : {}, Thread id : {}, name : {}", message, Thread.currentThread().getId(), Thread.currentThread().getName());
+        try {
+            // work
+            Thread.sleep(5000L);
+
+            return new AsyncResult<>(message);
+        } catch (InterruptedException e) {
+            log.error("## InterruptedException occur", e);
+            return new AsyncResult<>("");
+        }
+    }
+}
+```
+
+> Controller  
+
+```
+package org.springdemo.controller;
+
+import java.util.concurrent.Future;
+import lombok.extern.slf4j.Slf4j;
+import org.springdemo.async.MessageSender;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+/**
+ * @author zaccoding github : https://github.com/zacscoding
+ */
+@Controller
+@RequestMapping("/async/**")
+@Slf4j
+public class AsyncController {
+
+    @Autowired
+    private MessageSender messageSender;
+    @Autowired
+    private GithubLookupService githubLookupService;
+
+    @GetMapping("/echo/{message}/{isWait}")
+    @ResponseBody
+    public ResponseEntity<String> echo(@PathVariable("message") String message, @PathVariable("isWait") boolean isWait) {
+        log.info("[## Request /async/echo] Current Thread ID : {}, Name : {}, message : {}", Thread.currentThread().getId(), Thread.currentThread().getName(), message);
+        Future<String> future = messageSender.send(message);
+        log.info("[## after invoke messageSender.send()]");
+        if (isWait && future != null) {
+            try {
+                // wait
+                String result = null;
+                while ((result = future.get()) == null) {
+                }
+                message += result;
+            } catch (Exception e) {
+                message += ("Exception occur : " + e.getMessage());
+            }
+        }
+        return new ResponseEntity<>(message, HttpStatus.OK);
+    }
+    ...
+}
+
+```
+
+> Request http://localhost:8080/demo/async/echo/test/false
+
+```
+INFO : org.springdemo.controller.AsyncController - [## Request /async/echo] Current Thread ID : 31, Name : http-nio-8080-exec-7, message : test
+INFO : org.springdemo.controller.AsyncController - [## after invoke messageSender.send()]
+INFO : org.springdemo.async.MessageSender - [## MessageSender:send()] message : test, Thread id : 58, name : asyncThreadPoolTaskExecutor-1
+```  
+
+=> Use another thread(asyncThreadPoolTaskExecutor-1) from executor pool
+=> Connection state is maintained after returning the thread(http-nio-8080-exec-7)
+
+***3. Simple sample***  
+
+> Controller  
+
+```
+package org.springdemo.controller;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Future;
+import javax.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
+import org.springdemo.async.GithubLookupService;
+import org.springdemo.async.MessageSender;
+import org.springdemo.domain.User;
+import org.springdemo.util.EscapeUtil;
+import org.springdemo.util.ServletUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+/**
+ * @author zaccoding github : https://github.com/zacscoding
+ */
+@Controller
+@RequestMapping("/async/**")
+@Slf4j
+public class AsyncController {
+
+    ...
+    @Autowired
+    private GithubLookupService githubLookupService;
+
+    ...
+
+    @GetMapping("/github-lookup")
+    public String githubLookupIndex() {
+        return "githubLookup";
+    }
+
+    @GetMapping("/github-lookup/{user}")
+    @ResponseBody
+    public void githubLookup(@PathVariable("user") String user) throws IOException {
+        HttpServletResponse res = ServletUtil.getHttpServletResponse();
+        PrintWriter pw = res.getWriter();
+        try {
+            log.info("[## request github-lookup] user : {}", user);
+            CompletableFuture<User> result = githubLookupService.findUser(user);
+            log.info("[## after githubLookupService.findUser()] result.isDone() : {}", result.isDone());
+            res.setContentType("text/html; charset=UTF-8");
+            res.setHeader("Cache-Control", "private");
+            res.setHeader("Pragma", "no-cache");
+            res.setCharacterEncoding("UTF-8");
+
+            // send complete request message
+            sendMessage(pw, "Success request");
+            // wait
+            CompletableFuture.allOf(result).join();
+            // send result
+            sendMessage(pw, result.get().toString());
+            sendMessage(pw, "Complete request");
+        } catch (Exception e) {
+            sendMessage(pw, e.getMessage());
+        }
+    }
+
+    private void sendMessage(PrintWriter pw, String message) throws IOException {
+        if (pw == null) {
+            return;
+        }
+        pw.println(parseContent(message));
+        pw.flush();
+    }
+
+    /**
+     * http://javacan.tistory.com/entry/Servlet-3-Async parse JS append command
+     */
+    private String parseContent(String message) {
+        return "<script type='text/javascript'>\n"
+            + "window.parent.result.append({ message: \""
+            + EscapeUtil.escape(message) + "\" });\n" + "</script>\n";
+    }
+}
+
+```
+
+> GithubLookupService  
+
+```
+package org.springdemo.async;
+
+import java.util.concurrent.CompletableFuture;
+import lombok.extern.slf4j.Slf4j;
+import org.springdemo.domain.User;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
+
+/**
+ * ref :: https://spring.io/guides/gs/async-method/
+ *
+ * @author zacconding
+ * @Date 2018-02-14
+ * @GitHub : https://github.com/zacscoding
+ */
+@Component
+@Slf4j
+public class GithubLookupService {
+
+    @Async("asyncThreadPoolTaskExecutor")
+    public CompletableFuture<User> findUser(String user) throws InterruptedException {
+        log.info("[## request findUser] user : {}", user);
+        String url = String.format("https://api.github.com/users/%s", user);
+        User result = new RestTemplate().getForObject(url, User.class);
+        log.info("[## result of api] {}", result);
+        Thread.sleep(2000L);
+        log.info("##[after sleep]");
+        return CompletableFuture.completedFuture(result);
+    }
+}
+```  
+
+> githubLookup.jsp  
+
+```
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>GithubLookUp</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <c:set var="context" value="${pageContext.request.contextPath}"/>
+</head>
+<body>
+
+<div id="message"></div>
+<input type="text" name="user" id="user">
+<input type="button" id="sendBtn" value="lookup">
+<iframe id="append-frame" style="display: none;"></iframe>
+
+<script>
+  var resultMessageDiv = $('#message');
+  var result = {
+    append: function (messageObj) {
+      console.log('append message', messageObj);
+      resultMessageDiv.append("<div>" + messageObj.message + "</div>");
+    }
+  };
+
+  $(function () {
+    var userObj = $('#user');
+    $('#sendBtn').on('click', function () {
+      var user = userObj.val();
+      console.log('click send btn ' + user);
+      if (!user) {
+        return;
+      }
+
+      var url = '${context}/async/github-lookup/' + user;
+      document.getElementById('append-frame').src = url;
+    });
+  });
+</script>
+</body>
+</html>
+```
+
+> Result(Console)  
+
+```
+INFO : org.springdemo.controller.AsyncController - [## request github-lookup] user : zacscoding
+INFO : org.springdemo.controller.AsyncController - [## after githubLookupService.findUser()] result.isDone() : false
+INFO : org.springdemo.async.GithubLookupService - [## request findUser] user : zacscoding
+INFO : org.springdemo.async.GithubLookupService - [## result of api] User(login=zacscoding, id=25560203, htmlUrl=null, name=zaccoding, bio=BEGINNER :))
+INFO : org.springdemo.async.GithubLookupService - ##[after sleep]
+```
+
+> Result(Browser)  
+
+![Async result1](./pics/[async]result1.png)  
+
+![Async result2](./pics/[async]result2.png)  
+
+![Async result3](./pics/[async]result3.png)  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
 
 ---
