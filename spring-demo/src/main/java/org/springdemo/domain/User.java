@@ -1,6 +1,8 @@
 package org.springdemo.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy.SnakeCaseStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -15,6 +17,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
+@JsonNaming(SnakeCaseStrategy.class)
 public class User {
 
     private String login;
