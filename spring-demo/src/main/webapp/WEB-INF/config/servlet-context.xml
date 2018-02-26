@@ -23,5 +23,5 @@
         <beans:property name="suffix" value=".jsp" />
     </beans:bean>
 
-    <context:component-scan base-package="org.springdemo.controller" />
+    <context:component-scan base-package="org.springdemo.web" />
 </beans:beans>

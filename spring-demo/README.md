@@ -486,7 +486,7 @@ public class MessageSender {
 > Controller  
 
 ```
-package org.springdemo.controller;
+package org.springdemo.web;
 
 import java.util.concurrent.Future;
 import lombok.extern.slf4j.Slf4j;
@@ -540,8 +540,8 @@ public class AsyncController {
 > Request http://localhost:8080/demo/async/echo/test/false
 
 ```
-INFO : org.springdemo.controller.AsyncController - [## Request /async/echo] Current Thread ID : 31, Name : http-nio-8080-exec-7, message : test
-INFO : org.springdemo.controller.AsyncController - [## after invoke messageSender.send()]
+INFO : org.springdemo.web.AsyncController - [## Request /async/echo] Current Thread ID : 31, Name : http-nio-8080-exec-7, message : test
+INFO : org.springdemo.web.AsyncController - [## after invoke messageSender.send()]
 INFO : org.springdemo.async.MessageSender - [## MessageSender:send()] message : test, Thread id : 58, name : asyncThreadPoolTaskExecutor-1
 ```  
 
@@ -554,7 +554,7 @@ INFO : org.springdemo.async.MessageSender - [## MessageSender:send()] message : 
 > Controller  
 
 ```
-package org.springdemo.controller;
+package org.springdemo.web;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -760,8 +760,8 @@ public class User {
 > Result(Console)  
 
 ```
-INFO : org.springdemo.controller.AsyncController - [## request github-lookup] user : zacscoding
-INFO : org.springdemo.controller.AsyncController - [## after githubLookupService.findUser()] result.isDone() : false
+INFO : org.springdemo.web.AsyncController - [## request github-lookup] user : zacscoding
+INFO : org.springdemo.web.AsyncController - [## after githubLookupService.findUser()] result.isDone() : false
 INFO : org.springdemo.async.GithubLookupService - [## request findUser] user : zacscoding
 INFO : org.springdemo.async.GithubLookupService - [## result of api] User(login=zacscoding, id=25560203, htmlUrl=null, name=zaccoding, bio=BEGINNER :))
 INFO : org.springdemo.async.GithubLookupService - ##[after sleep]
