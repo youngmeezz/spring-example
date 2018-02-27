@@ -64,7 +64,7 @@ public class AsyncController {
         HttpServletResponse res = ServletUtil.getHttpServletResponse();
         PrintWriter pw = res.getWriter();
         try {
-            log.info("[## request github-lookup] user : {}", user);
+            log.info("[## request github-lookup] user : {}, Thread id : {} , name : {}", user, Thread.currentThread().getId(), Thread.currentThread().getName());
             CompletableFuture<User> result = githubLookupService.findUser(user);
             log.info("[## after githubLookupService.findUser()] result.isDone() : {}", result.isDone());
             res.setContentType("text/html; charset=UTF-8");
@@ -75,7 +75,7 @@ public class AsyncController {
             // send complete request message
             sendMessage(pw, "Success request");
             // wait
-            CompletableFuture.allOf(result).join();
+            //CompletableFuture.allOf(result).join();
             // send result
             sendMessage(pw, result.get().toString());
             sendMessage(pw, "Complete request");
