@@ -1,9 +1,10 @@
-package org.springdemo.controller;
+package org.springdemo.web;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springdemo.async.GithubLookupService;
@@ -33,6 +34,11 @@ public class AsyncController {
     @Autowired
     private GithubLookupService githubLookupService;
 
+    @GetMapping("/echo")
+    public String echo() {
+        return "echo";
+    }
+
     @GetMapping("/echo/{message}/{isWait}")
     @ResponseBody
     public ResponseEntity<String> echo(@PathVariable("message") String message, @PathVariable("isWait") boolean isWait) {
@@ -51,6 +57,14 @@ public class AsyncController {
             }
         }
         return new ResponseEntity<>(message, HttpStatus.OK);
+    }
+
+    @GetMapping("/echo/{message}/{repeat}/{sleep}")
+    @ResponseBody
+    public void echoRepeatedly(@PathVariable("message") String message, @PathVariable("repeat") int repeat, @PathVariable("sleep") long sleep) throws Exception {
+        log.info("[## MessageSender:sendRepeatedly()] message : {}, repeat : {}, sleep : {}, Thread id : {}, name : {}", message, repeat, sleep, Thread.currentThread().getId(),Thread.currentThread().getName());
+        HttpServletRequest request = ServletUtil.getHttpServletRequest();
+        messageSender.sendRepeatedly(request, message, repeat, sleep);
     }
 
     @GetMapping("/github-lookup")

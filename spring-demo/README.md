@@ -393,10 +393,10 @@ public class ProfileConfig {
 1. Settings  
 2. Default test  
 3. Simple sample  
-User ---> Server : request github look up
-User <--- Server : response "Success request"
-User <--- Server : response Result of github user  
-user <--- Server : response "Complete request"
+User ---> Server : request github look up  
+User <--- Server : response "Success request"  
+User <--- Server : response Result of github user   
+user <--- Server : response "Complete request"  
 
 #### ref  
 
@@ -486,7 +486,7 @@ public class MessageSender {
 > Controller  
 
 ```
-package org.springdemo.controller;
+package org.springdemo.web;
 
 import java.util.concurrent.Future;
 import lombok.extern.slf4j.Slf4j;
@@ -540,20 +540,21 @@ public class AsyncController {
 > Request http://localhost:8080/demo/async/echo/test/false
 
 ```
-INFO : org.springdemo.controller.AsyncController - [## Request /async/echo] Current Thread ID : 31, Name : http-nio-8080-exec-7, message : test
-INFO : org.springdemo.controller.AsyncController - [## after invoke messageSender.send()]
+INFO : org.springdemo.web.AsyncController - [## Request /async/echo] Current Thread ID : 31, Name : http-nio-8080-exec-7, message : test
+INFO : org.springdemo.web.AsyncController - [## after invoke messageSender.send()]
 INFO : org.springdemo.async.MessageSender - [## MessageSender:send()] message : test, Thread id : 58, name : asyncThreadPoolTaskExecutor-1
 ```  
 
-=> Use another thread(asyncThreadPoolTaskExecutor-1) from executor pool
-=> Connection state is maintained after returning the thread(http-nio-8080-exec-7)
+=> Use another thread(asyncThreadPoolTaskExecutor-1) from executor pool  
+=> Connection state is maintained after returning the thread(http-nio-8080-exec-7)  
+
 
 ***3. Simple sample***  
 
 > Controller  
 
 ```
-package org.springdemo.controller;
+package org.springdemo.web;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -676,6 +677,40 @@ public class GithubLookupService {
 }
 ```  
 
+> User (domain)
+
+```
+package org.springdemo.domain;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy.SnakeCaseStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
+/**
+ * result of  "https://api.github.com/users/zacscoding"
+ *
+ * @author zacconding
+ * @Date 2018-02-14
+ * @GitHub : https://github.com/zacscoding
+ */
+@Getter
+@Setter
+@ToString
+@JsonNaming(SnakeCaseStrategy.class)
+public class User {
+
+    private String login;
+    private long id;
+    private String htmlUrl;
+    private String name;
+    private String bio;
+}
+```
+
+
 > githubLookup.jsp  
 
 ```
@@ -725,8 +760,8 @@ public class GithubLookupService {
 > Result(Console)  
 
 ```
-INFO : org.springdemo.controller.AsyncController - [## request github-lookup] user : zacscoding
-INFO : org.springdemo.controller.AsyncController - [## after githubLookupService.findUser()] result.isDone() : false
+INFO : org.springdemo.web.AsyncController - [## request github-lookup] user : zacscoding
+INFO : org.springdemo.web.AsyncController - [## after githubLookupService.findUser()] result.isDone() : false
 INFO : org.springdemo.async.GithubLookupService - [## request findUser] user : zacscoding
 INFO : org.springdemo.async.GithubLookupService - [## result of api] User(login=zacscoding, id=25560203, htmlUrl=null, name=zaccoding, bio=BEGINNER :))
 INFO : org.springdemo.async.GithubLookupService - ##[after sleep]

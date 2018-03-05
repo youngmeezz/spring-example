@@ -1,4 +1,4 @@
-package org.springdemo.controller;
+package org.springdemo.web;
 
 import org.springdemo.domain.EnvProfile;
 import org.springframework.beans.factory.annotation.Autowired;
