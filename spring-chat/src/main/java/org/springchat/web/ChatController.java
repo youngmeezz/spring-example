@@ -1,18 +1,15 @@
 package org.springchat.web;
 
-import javax.servlet.http.HttpServletRequest;
-import org.springchat.domain.Client;
-import org.springchat.repository.ChatRepository;
-import org.springchat.util.ServletUtil;
+import org.springchat.service.ChatService;
 import org.springchat.util.SimpleLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.async.DeferredResult;
-import sun.java2d.pipe.SpanShapeRenderer.Simple;
 
 /**
  * @author zaccoding
@@ -21,49 +18,33 @@ import sun.java2d.pipe.SpanShapeRenderer.Simple;
 @Controller
 @RequestMapping("/chat")
 public class ChatController {
-//
+
+    //
 //    @Autowired
 //    private ChatRepository chatRepository;
+    @Autowired
+    private ChatService chatService;
 
+    @GetMapping("/index")
+    public String index() {
+        SimpleLogger.println("## [request index page]");
+        return "index";
+    }
 
     /**
      * Request to join chat & response Chat Room Information
      */
-    @GetMapping("/join")
-    @ResponseBody
-    public DeferredResult<Void> join() {
-        SimpleLogger.info("[## request join]");
-        return null;
-    }
-
-    /**
-     * Request to get messages
-     * @return
-     */
     @GetMapping("/messages")
     @ResponseBody
-    public DeferredResult<Void> getMessages() {
+    public DeferredResult<String> getMessages() {
         SimpleLogger.info("[## request get messages]");
-        return null;
+        return chatService.getMessage();
     }
 
-    /**
-     * Request to submit messages
-     */
     @PostMapping("/messages")
     @ResponseBody
-    public DeferredResult<Void> postMessage() {
-        SimpleLogger.info("[## request submit message]");
-        return null;
-    }
-
-    private Client getClientFromHttpServletRequest() {
-        HttpServletRequest request = ServletUtil.getHttpServletRequest();
-        if (request == null) {
-            return null;
-        }
-        else {
-            return null;
-        }
+    public void postMessage(@RequestBody String message) {
+        SimpleLogger.info("[## request post message] message : " + message);
+        chatService.addMessage(message);
     }
 }

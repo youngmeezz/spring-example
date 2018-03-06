@@ -1,6 +1,7 @@
 package org.springchat.config;
 
 import java.util.List;
+import javax.servlet.ServletRegistration.Dynamic;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -40,7 +41,7 @@ public class WebMvcConfig extends WebMvcConfigurationSupport {
     public ViewResolver jspViewResolver() {
         InternalResourceViewResolver resolver = new InternalResourceViewResolver();
         resolver.setViewClass(JstlView.class);
-        resolver.setPrefix("/WEB-INF/view/");
+        resolver.setPrefix("/WEB-INF/views/");
         resolver.setSuffix(".jsp");
         return resolver;
     }
