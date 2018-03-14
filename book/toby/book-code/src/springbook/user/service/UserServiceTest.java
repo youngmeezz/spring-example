@@ -3,37 +3,35 @@ package springbook.user.service;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
-import static springbook.user.service.UserService.MIN_LOGCOUNT_FOR_SILVER;
-import static springbook.user.service.UserService.MIN_RECCOMENT_FOR_GOLD;
+import static springbook.user.service.UserServiceImpl.MIN_LOGCOUNT_FOR_SILVER;
+import static springbook.user.service.UserServiceImpl.MIN_RECCOMEND_FOR_GOLD;
 
 import java.util.Arrays;
 import java.util.List;
-import javax.sql.DataSource;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.aop.framework.ProxyFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.transaction.PlatformTransactionManager;
 import springbook.user.dao.UserDao;
 import springbook.user.domain.Level;
 import springbook.user.domain.User;
-import springbook.user.service.UserService.TestUserService;
-import springbook.user.service.UserService.TestUserServiceException;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/test-applicationContext.xml")
 public class UserServiceTest {
 
     @Autowired
-    private UserService userService;
+    private UserServiceImpl userService;
     @Autowired
     private UserDao userDao;
-    @Autowired
-    private DataSource dataSource;
-    @Autowired
-    private PlatformTransactionManager transactionManager;
+    //@Autowired
+    private ApplicationContext context;
+
     private List<User> users;
 
     @Before
@@ -41,8 +39,8 @@ public class UserServiceTest {
         users = Arrays.asList(
             new User("bumjin", "name1", "p1", Level.BASIC, MIN_LOGCOUNT_FOR_SILVER - 1, 0),
             new User("joytouch", "name2", "p2", Level.BASIC, MIN_LOGCOUNT_FOR_SILVER, 0),
-            new User("erwins", "name3", "p3", Level.SILVER, 60, MIN_RECCOMENT_FOR_GOLD - 1),
-            new User("madnite1", "name4", "p4", Level.SILVER, 60, MIN_RECCOMENT_FOR_GOLD),
+            new User("erwins", "name3", "p3", Level.SILVER, 60, MIN_LOGCOUNT_FOR_SILVER - 1),
+            new User("madnite1", "name4", "p4", Level.SILVER, 60, MIN_RECCOMEND_FOR_GOLD),
             new User("green", "name5", "p5", Level.GOLD, 100, Integer.MAX_VALUE)
         );
     }
@@ -83,15 +81,16 @@ public class UserServiceTest {
     }
 
     @Test
-    public void upgradeAllOrNothing() throws Exception {
+    @DirtiesContext //컨텍스트 설정을 변경하기 떄문에 여전히 필요
+    public void upgradeAllOrNothing() {
         // 예외를 발생 시킬 ID
-        UserService testUserService = new TestUserService(users.get(3).getId());
+        TestUserService testUserService = new TestUserService(users.get(3).getId());
         // UserDao setting
         testUserService.setUserDao(this.userDao);
-        // DataSource setting
-        testUserService.setDataSource(dataSource);
-        // setting TransactionManager
-        testUserService.setTransactionManager(transactionManager);
+
+        ProxyFactoryBean txProxyFactoryBean = context.getBean("&userService", ProxyFactoryBean.class);
+        txProxyFactoryBean.setTarget(testUserService);
+        UserService txUserService = (UserService) txProxyFactoryBean.getObject();
 
         // given
         userDao.deleteAll();
@@ -100,11 +99,10 @@ public class UserServiceTest {
         }
 
         try {
-            testUserService.upgradeLevels();
+            txUserService.upgradeLevels();
             // 아래 코드가 실행되면 fail
             fail("TestUserServiceException expected");
         } catch (TestUserServiceException e) {
-
         }
         checkLevelUpgraded(users.get(1), false);
     }
@@ -116,6 +114,26 @@ public class UserServiceTest {
         } else {
             assertThat(userUpdate.getLevel(), is(user.getLevel()));
         }
+
+    }
+
+    public static class TestUserService extends UserServiceImpl {
+
+        private String id;
+
+        public TestUserService(String id) {
+            this.id = id;
+        }
+
+        protected void upgradeLevel(User user) {
+            if (user.getId().equals(this.id)) {
+                throw new TestUserServiceException();
+            }
+            super.upgradeLevel(user);
+        }
+    }
+
+    static class TestUserServiceException extends RuntimeException {
 
     }
 }
