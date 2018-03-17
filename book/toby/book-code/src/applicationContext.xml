@@ -11,12 +11,18 @@
         <property name="password" value="spring"/>
     </bean>
 
-    <bean id="userServiceImpl" class="springbook.user.service.UserServiceImpl">
-        <property name="userDao" ref="userDao"/>
+    <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+        <property name="host" value="mail.server.com" />
     </bean>
+
 
     <bean id="userDao" class="springbook.user.dao.UserDaoJdbc">
         <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <bean id="userServiceImpl" class="springbook.user.service.UserServiceImpl">
+        <property name="userDao" ref="userDao"/>
+        <property name="mailSender" ref="mailSender" />
     </bean>
 
     <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">

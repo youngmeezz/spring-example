@@ -1,93 +1,103 @@
 package springbook.user.domain;
 
 public class User {
-  String id;
-  String name;
-  String password;
-  Level level;
-  int login;
-  int recommend;
 
-  public User(String id, String name, String password) {
-    this.id = id;
-    this.name = name;
-    this.password = password;
-    this.level = Level.BASIC;
-  }
+    String id;
+    String name;
+    String password;
+    String email;
+    Level level;
+    int login;
+    int recommend;
 
-  public User(String id, String name, String password, Level level, int login, int recommend) {
-    super();
-    this.id = id;
-    this.name = name;
-    this.password = password;
-    this.level = level;
-    this.login = login;
-    this.recommend = recommend;
-  }
-
-  public void upgradeLevel() {
-    Level nextLevel = this.level.nextLevel();
-    if (nextLevel == null) {
-      throw new IllegalStateException(this.level + "은 업그레이드가 불가능 합니다.");
-    } else {
-      this.level = nextLevel;
+    public User(String id, String name, String password) {
+        this.id = id;
+        this.name = name;
+        this.password = password;
+        this.level = Level.BASIC;
     }
-  }
 
-  public User() {
-    //empty
-  }
+    public User(String id, String name, String password, Level level, int login, int recommend) {
+        super();
+        this.id = id;
+        this.name = name;
+        this.password = password;
+        this.level = level;
+        this.login = login;
+        this.recommend = recommend;
+    }
 
-  public Level getLevel() {
-    return level;
-  }
+    public void upgradeLevel() {
+        Level nextLevel = this.level.nextLevel();
+        if (nextLevel == null) {
+            throw new IllegalStateException(this.level + "은 업그레이드가 불가능 합니다.");
+        } else {
+            this.level = nextLevel;
+        }
+    }
 
-  public void setLevel(Level level) {
-    this.level = level;
-  }
+    public User() {
+        //empty
+    }
 
-  public int getLogin() {
-    return login;
-  }
+    public Level getLevel() {
+        return level;
+    }
 
-  public void setLogin(int login) {
-    this.login = login;
-  }
+    public void setLevel(Level level) {
+        this.level = level;
+    }
 
-  public int getRecommend() {
-    return recommend;
-  }
+    public int getLogin() {
+        return login;
+    }
 
-  public void setRecommend(int recommend) {
-    this.recommend = recommend;
-  }
+    public void setLogin(int login) {
+        this.login = login;
+    }
 
-  public String getId() {
-    return id;
-  }
+    public int getRecommend() {
+        return recommend;
+    }
 
-  public void setId(String id) {
-    this.id = id;
-  }
+    public void setRecommend(int recommend) {
+        this.recommend = recommend;
+    }
 
-  public String getName() {
-    return name;
-  }
+    public String getId() {
+        return id;
+    }
 
-  public void setName(String name) {
-    this.name = name;
-  }
+    public void setId(String id) {
+        this.id = id;
+    }
 
-  public String getPassword() {
-    return password;
-  }
+    public String getName() {
+        return name;
+    }
 
-  public void setPassword(String password) {
-    this.password = password;
-  }
+    public void setName(String name) {
+        this.name = name;
+    }
 
-  @Override
-  public String toString() {
-    return "User [id=" + id + ", name=" + name + ", password=" + password + "]";
-  }
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    @Override
+    public String toString() {
+        return "User [id=" + id + ", name=" + name + ", password=" + password + "]";
+    }
 }
