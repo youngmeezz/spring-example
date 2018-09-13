@@ -1,6 +1,6 @@
 package org.demo.service;
 
-import org.demo.entity.Person;
+import org.demo.model.Person;
 
 /**
  * @author zacconding
@@ -9,11 +9,11 @@ import org.demo.entity.Person;
  */
 public interface PersonService {
 
-    int registPerson(Person person);
+    int regist(Person person);
 
-    int modifyPerson(Person person);
+    int modify(Person person);
 
-    Person getPersonById(Long id);
+    Person getPersonById(String id);
 
-    int removePerson(Long id);
+    int remove(String id);
 }

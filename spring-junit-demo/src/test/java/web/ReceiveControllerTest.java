@@ -1,10 +1,11 @@
-package org.demo.web;
+package web;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import org.demo.web.GuideController;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,7 +25,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
-@ContextConfiguration(locations = {"classpath:config/root-context.xml"})
+@ContextConfiguration(locations = {"classpath:spring/root-context.xml"})
 public class ReceiveControllerTest {
 
     @InjectMocks

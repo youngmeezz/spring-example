@@ -1,6 +1,10 @@
 package org.demo.dao;
 
-import org.demo.entity.Person;
+import org.apache.ibatis.annotations.Delete;
+import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
+import org.demo.model.Person;
 
 /**
  * @author zacconding
@@ -9,11 +13,15 @@ import org.demo.entity.Person;
  */
 public interface PersonDao {
 
+    @Insert("INSERT INTO PERSON (id, name, age) VALUES(#{id}, #{name}, #{age})")
     int savePerson(Person person);
 
+    @Update("UPDATE PERSON SET name = #{name}, age = #{age} WHERE id = #{id}")
     int updatePerson(Person person);
 
-    int deletePerson(Person person);
+    @Delete("DELETE FROM PERSON WHERE id = #{id}")
+    int deletePerson(String id);
 
-    Person findOneById(Long id);
+    @Select("SELECT * FROM PERSON WHERE id = #{id}")
+    Person getPersonById(String id);
 }
